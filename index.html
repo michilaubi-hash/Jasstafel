@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Jass – Schiefertafel</title>
+  <style>
+    :root{
+      --slate1:#0f1a14;
+      --slate2:#0b1410;
+      --chalk:#f3f6f1;
+      --line:rgba(243,246,241,.26);
+      --line-strong:rgba(243,246,241,.42);
+      --glass:rgba(0,0,0,.18);
+    }
+
+    *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
+    html,body{ height:100%; margin:0; }
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial;
+      color: var(--chalk);
+      background:
+        radial-gradient(1200px 800px at 20% 10%, rgba(255,255,255,.06), transparent 55%),
+        radial-gradient(900px 600px at 90% 30%, rgba(255,255,255,.05), transparent 60%),
+        linear-gradient(180deg, var(--slate1), var(--slate2));
+      display:flex;
+      justify-content:center;
+      align-items:stretch;
+    }
+
+    .wrap{
+      width:min(980px, 100%);
+      padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+
+    .topbar{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding:10px 12px;
+      border:1px solid var(--line);
+      border-radius:16px;
+      background: rgba(0,0,0,.18);
+      backdrop-filter: blur(6px);
+    }
+
+    button{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.20);
+      color: var(--chalk);
+      padding:10px 12px;
+      border-radius:14px;
+      font-weight:900;
+      font-size:14px;
+      cursor:pointer;
+      user-select:none;
+      touch-action: manipulation;
+      transition: transform .06s ease, background .12s ease, border-color .12s ease;
+      min-width: 120px;
+    }
+    button:active{ transform: scale(.98); }
+
+    .toggle.on{
+      border-color: rgba(255,255,255,.55);
+      background: rgba(255,255,255,.10);
+    }
+    .toggle.on.subtract{
+      border-color: rgba(255,120,120,.75);
+      background: rgba(255,120,120,.12);
+    }
+
+    .board{
+      flex:1;
+      border:2px solid var(--line-strong);
+      border-radius:22px;
+      overflow:hidden;
+      background:
+        radial-gradient(900px 500px at 30% 20%, rgba(255,255,255,.05), transparent 60%),
+        radial-gradient(800px 450px at 80% 70%, rgba(255,255,255,.04), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.08), rgba(0,0,0,.18));
+      box-shadow: 0 16px 40px rgba(0,0,0,.35);
+      position:relative;
+      display:flex;
+      flex-direction:column;
+      min-height: 0;
+    }
+
+    .divider{
+      height:2px;
+      background: var(--line-strong);
+      position:relative;
+      flex: 0 0 auto;
+    }
+
+    /* Summe in der Mitte (oben/unten), obere auf dem Kopf */
+    .sumChip{
+      position:absolute;
+      left:50%;
+      transform: translateX(-50%);
+      padding:8px 12px;
+      border-radius:999px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      font-weight:1000;
+      font-size:18px;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      pointer-events:none;
+    }
+    .sumChip.top{
+      top: calc(50% - 32px);
+      transform: translateX(-50%) rotate(180deg);
+    }
+    .sumChip.bottom{
+      top: calc(50% + 10px);
+    }
+
+    /* Panel pro Team: links 3 Touch-Balken, rechts Rest-Spalte */
+    .teamPanel{
+      flex:1 1 0;
+      display:grid;
+      grid-template-columns: 1fr 150px;
+      gap:10px;
+      padding:12px;
+      min-height:0;
+    }
+
+    /* obere Hälfte komplett auf den Kopf stellen */
+    .teamPanel.top{
+      transform: rotate(180deg);
+      transform-origin: center;
+    }
+
+    .leftZones{
+      display:grid;
+      grid-template-rows: repeat(3, 1fr);
+      gap:10px;
+      min-height:0;
+    }
+
+    .zone{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background: var(--glass);
+      padding:10px;
+      display:flex;
+      align-items:flex-end;
+      min-height:0;
+      user-select:none;
+      touch-action: manipulation;
+    }
+    .zone:active{ transform: scale(.99); }
+
+    /* 100/20: klassische 5er-Striche */
+    .tally{
+      width:100%;
+      display:flex;
+      align-items:flex-end;
+      gap:10px;
+      overflow:hidden;
+      padding: 6px 2px 2px 2px;
+    }
+
+    .group{
+      width:30px;
+      height:48px;
+      position:relative;
+      opacity:.95;
+      flex: 0 0 auto;
+    }
+    .stroke{
+      position:absolute;
+      bottom:0;
+      width:3px;
+      height:48px;
+      background: var(--chalk);
+      border-radius:2px;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.25));
+    }
+    .s1{ left:2px; }
+    .s2{ left:9px; }
+    .s3{ left:16px; }
+    .s4{ left:23px; }
+    .diag{
+      position:absolute;
+      left:-1px;
+      bottom:7px;
+      width:34px;
+      height:4px;
+      background: var(--chalk);
+      border-radius:2px;
+      transform: rotate(-28deg);
+      transform-origin:left center;
+    }
+
+    /* 50er: Jass-Style Schrägstriche und Kreuz (2 Schrägstriche) */
+    .tally50{
+      width:100%;
+      display:flex;
+      align-items:flex-end;
+      flex-wrap:wrap;
+      gap:12px;
+      padding: 6px 2px 2px 2px;
+      overflow:hidden;
+    }
+
+    .mark50{
+      width:34px;
+      height:48px;
+      position:relative;
+      opacity:.95;
+      flex: 0 0 auto;
+    }
+
+    .slash{
+      position:absolute;
+      left:50%;
+      top:4px;
+      width:4px;
+      height:42px;
+      background: var(--chalk);
+      border-radius:2px;
+      filter: drop-shadow(0 1px 0 rgba(0,0,0,.25));
+      transform-origin: center;
+    }
+    /* wie Kreidestrich: leicht schräg */
+    .slash.fwd{ transform: translateX(-50%) rotate(-28deg); } /* / */
+    .slash.back{ transform: translateX(-50%) rotate(28deg); } /* \ */
+
+    /* Rest-Spalte */
+    .restCol{
+      border:1px solid var(--line);
+      border-radius:18px;
+      background: var(--glass);
+      padding:10px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+      min-height:0;
+      justify-content:flex-end;
+    }
+
+    .restValue{
+      text-align:right;
+      font-weight:1000;
+      font-size:18px;
+      min-height: 22px;
+      opacity:.95;
+    }
+
+    input[type="number"]{
+      width:100%;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      color: var(--chalk);
+      padding:12px 10px;
+      border-radius:12px;
+      font-weight:900;
+      font-size:16px;
+      outline:none;
+    }
+
+    /* leer statt 0 anzeigen */
+    .mutedEmpty{ opacity:0; }
+
+    @media (max-width: 420px){
+      .teamPanel{ grid-template-columns: 1fr 132px; padding:10px; }
+      .sumChip{ font-size:16px; padding:7px 10px; }
+      .group{ height:44px; }
+      .stroke{ height:44px; }
+      .mark50{ height:44px; width:32px; }
+      .slash{ height:38px; }
+      button{ min-width: 110px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="topbar">
+      <button class="toggle" id="btnMode" aria-pressed="false">Korrektur</button>
+      <button id="btnReset">Reset</button>
+    </div>
+
+    <div class="board" role="application" aria-label="Jass Schiefertafel">
+      <div class="sumChip top" id="sumTop">0</div>
+      <div class="sumChip bottom" id="sumBottom">0</div>
+
+      <!-- OBEN (Gegenspieler, auf dem Kopf) -->
+      <div class="teamPanel top" data-team="A" aria-label="Oben">
+        <div class="leftZones">
+          <div class="zone" data-team="A" data-val="100"><div class="tally" id="a100Tally"></div></div>
+          <div class="zone" data-team="A" data-val="50"><div class="tally50" id="a50Tally"></div></div>
+          <div class="zone" data-team="A" data-val="20"><div class="tally" id="a20Tally"></div></div>
+        </div>
+
+        <div class="restCol">
+          <div class="restValue" id="restA"></div>
+          <input id="restInputA" type="number" inputmode="numeric" placeholder="Neuer Restbetrag" />
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <!-- UNTEN (du) -->
+      <div class="teamPanel" data-team="B" aria-label="Unten">
+        <div class="leftZones">
+          <div class="zone" data-team="B" data-val="100"><div class="tally" id="b100Tally"></div></div>
+          <div class="zone" data-team="B" data-val="50"><div class="tally50" id="b50Tally"></div></div>
+          <div class="zone" data-team="B" data-val="20"><div class="tally" id="b20Tally"></div></div>
+        </div>
+
+        <div class="restCol">
+          <div class="restValue" id="restB"></div>
+          <input id="restInputB" type="number" inputmode="numeric" placeholder="Neuer Restbetrag" />
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    (function(){
+      const state = {
+        subtract: false,
+        A: { c100: 0, c50: 0, c20: 0, rest: 0 },
+        B: { c100: 0, c50: 0, c20: 0, rest: 0 }
+      };
+
+      const el = {
+        btnMode: document.getElementById('btnMode'),
+        btnReset: document.getElementById('btnReset'),
+        sumTop: document.getElementById('sumTop'),
+        sumBottom: document.getElementById('sumBottom'),
+        restA: document.getElementById('restA'),
+        restB: document.getElementById('restB'),
+        restInputA: document.getElementById('restInputA'),
+        restInputB: document.getElementById('restInputB'),
+      };
+
+      function clampMinZero(n){ return Math.max(0, n); }
+
+      function teamSum(t){
+        return (t.c100*100) + (t.c50*50) + (t.c20*20) + (t.rest || 0);
+      }
+
+      // 100/20: klassische 5er-Striche
+      function makeTallyGroup(countInGroup){
+        const g = document.createElement('div');
+        g.className = 'group';
+        if(countInGroup >= 1){ const s=document.createElement('div'); s.className='stroke s1'; g.appendChild(s); }
+        if(countInGroup >= 2){ const s=document.createElement('div'); s.className='stroke s2'; g.appendChild(s); }
+        if(countInGroup >= 3){ const s=document.createElement('div'); s.className='stroke s3'; g.appendChild(s); }
+        if(countInGroup >= 4){ const s=document.createElement('div'); s.className='stroke s4'; g.appendChild(s); }
+        if(countInGroup >= 5){ const d=document.createElement('div'); d.className='diag'; g.appendChild(d); }
+        return g;
+      }
+
+      function renderTally(containerId, n){
+        const host = document.getElementById(containerId);
+        host.innerHTML = "";
+        if(!n || n <= 0) return;
+
+        const maxGroups = 10;
+        const fullGroups = Math.floor(n / 5);
+        const rest = n % 5;
+
+        const groupsToShow = Math.min(fullGroups, maxGroups);
+        for(let i=0;i<groupsToShow;i++){
+          host.appendChild(makeTallyGroup(5));
+        }
+        if(fullGroups < maxGroups && rest > 0){
+          host.appendChild(makeTallyGroup(rest));
+        } else if(fullGroups >= maxGroups){
+          const dots = document.createElement('div');
+          dots.style.opacity = ".7";
+          dots.style.fontWeight = "1000";
+          dots.style.fontSize = "18px";
+          dots.textContent = "…";
+          host.appendChild(dots);
+        }
+      }
+
+      // 50er: / und Kreuz aus 2 Kreidestrichen (X)
+      function makeMark50(type){
+        // type: "slash" | "cross"
+        const m = document.createElement('div');
+        m.className = 'mark50';
+
+        const a = document.createElement('div');
+        a.className = 'slash fwd';
+        m.appendChild(a);
+
+        if(type === 'cross'){
+          const b = document.createElement('div');
+          b.className = 'slash back';
+          m.appendChild(b);
+        }
+        return m;
+      }
+
+      function renderTally50(containerId, n){
+        const host = document.getElementById(containerId);
+        host.innerHTML = "";
+        if(!n || n <= 0) return;
+
+        const pairs = Math.floor(n / 2); // jedes Paar = Kreuz (2 Striche)
+        const odd = n % 2;               // Rest = einzelner Strich
+
+        const maxMarks = 10;
+        let shown = 0;
+
+        for(let i=0; i<pairs && shown<maxMarks; i++){
+          host.appendChild(makeMark50('cross'));
+          shown++;
+        }
+
+        if(odd === 1 && shown < maxMarks){
+          host.appendChild(makeMark50('slash'));
+          shown++;
+        }
+
+        if((pairs + odd) > maxMarks){
+          const dots = document.createElement('div');
+          dots.style.opacity = ".7";
+          dots.style.fontWeight = "1000";
+          dots.style.fontSize = "18px";
+          dots.textContent = "…";
+          host.appendChild(dots);
+        }
+      }
+
+      function setMaybeEmptyText(elm, value){
+        if(!value){
+          elm.textContent = "";
+          elm.classList.add('mutedEmpty');
+        } else {
+          elm.textContent = String(value);
+          elm.classList.remove('mutedEmpty');
+        }
+      }
+
+      function render(){
+        renderTally('a100Tally', state.A.c100);
+        renderTally50('a50Tally', state.A.c50);
+        renderTally('a20Tally', state.A.c20);
+
+        renderTally('b100Tally', state.B.c100);
+        renderTally50('b50Tally', state.B.c50);
+        renderTally('b20Tally', state.B.c20);
+
+        setMaybeEmptyText(el.restA, state.A.rest);
+        setMaybeEmptyText(el.restB, state.B.rest);
+
+        el.sumTop.textContent = String(teamSum(state.A));
+        el.sumBottom.textContent = String(teamSum(state.B));
+
+        el.btnMode.classList.toggle('on', state.subtract);
+        el.btnMode.classList.toggle('subtract', state.subtract);
+        el.btnMode.setAttribute('aria-pressed', String(state.subtract));
+        el.btnMode.textContent = state.subtract ? 'Korrektur: AN' : 'Korrektur';
+      }
+
+      function bumpCount(teamKey, val){
+        const t = state[teamKey];
+        const delta = state.subtract ? -1 : 1;
+
+        if(val === 100) t.c100 = clampMinZero(t.c100 + delta);
+        if(val === 50)  t.c50  = clampMinZero(t.c50  + delta);
+        if(val === 20)  t.c20  = clampMinZero(t.c20  + delta);
+
+        render();
+      }
+
+      document.querySelectorAll('.zone').forEach(z => {
+        z.addEventListener('click', () => {
+          bumpCount(z.dataset.team, Number(z.dataset.val));
+        }, { passive:true });
+      });
+
+      el.btnMode.addEventListener('click', () => {
+        state.subtract = !state.subtract;
+        render();
+      });
+
+      // Rest: ersetzt (nicht addieren) – Enter oder blur
+      function commitRest(teamKey, inputEl){
+        const raw = (inputEl.value ?? "").toString().trim();
+        if(raw === "") return;
+        const n = Number(raw);
+        if(Number.isNaN(n)) return;
+
+        state[teamKey].rest = n;
+        inputEl.value = "";
+        render();
+      }
+
+      el.restInputA.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter'){ e.preventDefault(); commitRest('A', el.restInputA); }
+      });
+      el.restInputB.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter'){ e.preventDefault(); commitRest('B', el.restInputB); }
+      });
+
+      el.restInputA.addEventListener('blur', () => commitRest('A', el.restInputA));
+      el.restInputB.addEventListener('blur', () => commitRest('B', el.restInputB));
+
+      // Reset mit Bestätigung
+      el.btnReset.addEventListener('click', () => {
+        const ok = confirm("Wirklich alles zurücksetzen?");
+        if(!ok) return;
+
+        state.subtract = false;
+        state.A = { c100:0, c50:0, c20:0, rest:0 };
+        state.B = { c100:0, c50:0, c20:0, rest:0 };
+        el.restInputA.value = "";
+        el.restInputB.value = "";
+        render();
+      });
+
+      render();
+    })();
+  </script>
+</body>
+</html>

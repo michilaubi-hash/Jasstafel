@@ -30,7 +30,7 @@
 
     .wrap{
       width:min(980px, 100%);
-      padding: env(safe-area-inset-top) 12px env(safe-area-inset-bottom) 12px;
+      padding: env(safe-area-inset-top) 10px env(safe-area-inset-bottom) 10px;
       display:flex;
       flex-direction:column;
       gap:10px;
@@ -60,7 +60,7 @@
       user-select:none;
       touch-action: manipulation;
       transition: transform .06s ease, background .12s ease, border-color .12s ease;
-      min-width: 120px;
+      min-width: 112px;
     }
     button:active{ transform: scale(.98); }
 
@@ -86,88 +86,87 @@
       position:relative;
       display:flex;
       flex-direction:column;
-      min-height: 0;
+      min-height:0;
     }
 
     .divider{
       height:2px;
       background: var(--line-strong);
-      position:relative;
-      flex: 0 0 auto;
+      flex:0 0 auto;
     }
 
-    /* Summe in der Mitte (oben/unten), obere auf dem Kopf */
     .sumChip{
       position:absolute;
       left:50%;
       transform: translateX(-50%);
-      padding:8px 12px;
+      padding:7px 10px;
       border-radius:999px;
       border:1px solid var(--line);
       background: rgba(0,0,0,.22);
       font-weight:1000;
-      font-size:18px;
+      font-size:16px;
       letter-spacing:.2px;
       white-space:nowrap;
       pointer-events:none;
     }
     .sumChip.top{
-      top: calc(50% - 32px);
+      top: calc(50% - 30px);
       transform: translateX(-50%) rotate(180deg);
     }
     .sumChip.bottom{
       top: calc(50% + 10px);
     }
 
-    /* Panel pro Team: links 3 Touch-Balken, rechts Rest-Spalte */
+    /* WICHTIG: Rest sitzt NUR in Zeile 1 rechts.
+       50/20 spannen über beide Spalten => bis ganz nach rechts. */
     .teamPanel{
       flex:1 1 0;
       display:grid;
-      grid-template-columns: 1fr 150px;
-      gap:10px;
-      padding:12px;
+      grid-template-columns: 1fr 84px;   /* schmale Rest-Spalte */
+      grid-template-rows: 1fr 1fr 1fr;   /* 100 / 50 / 20 */
+      gap:8px;
+      padding:10px;
       min-height:0;
     }
 
-    /* obere Hälfte komplett auf den Kopf stellen */
     .teamPanel.top{
       transform: rotate(180deg);
       transform-origin: center;
-    }
-
-    .leftZones{
-      display:grid;
-      grid-template-rows: repeat(3, 1fr);
-      gap:10px;
-      min-height:0;
     }
 
     .zone{
       border:1px solid var(--line);
       border-radius:18px;
       background: var(--glass);
-      padding:10px;
+      padding:8px;
       display:flex;
-      align-items:flex-end;
+      align-items:stretch;
       min-height:0;
       user-select:none;
       touch-action: manipulation;
+      overflow:hidden;
     }
     .zone:active{ transform: scale(.99); }
 
-    /* 100/20: klassische 5er-Striche */
-    .tally{
+    /* Schreibfläche: startet LINKS, wächst nach rechts; bei Overflow horizontal scroll (ohne Layout-Shift) */
+    .write{
       width:100%;
       display:flex;
       align-items:flex-end;
-      gap:10px;
-      overflow:hidden;
-      padding: 6px 2px 2px 2px;
+      gap:6px;
+      padding: 4px 2px 2px 2px;
+      overflow-x:auto;
+      overflow-y:hidden;
+      flex-wrap:nowrap;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width:none;
     }
+    .write::-webkit-scrollbar{ display:none; }
 
+    /* 100/20: 5er-Striche */
     .group{
-      width:30px;
-      height:48px;
+      width:24px;
+      height:44px;
       position:relative;
       opacity:.95;
       flex: 0 0 auto;
@@ -176,20 +175,20 @@
       position:absolute;
       bottom:0;
       width:3px;
-      height:48px;
+      height:44px;
       background: var(--chalk);
       border-radius:2px;
       filter: drop-shadow(0 1px 0 rgba(0,0,0,.25));
     }
-    .s1{ left:2px; }
-    .s2{ left:9px; }
-    .s3{ left:16px; }
-    .s4{ left:23px; }
+    .s1{ left:1px; }
+    .s2{ left:7px; }
+    .s3{ left:13px; }
+    .s4{ left:19px; }
     .diag{
       position:absolute;
       left:-1px;
       bottom:7px;
-      width:34px;
+      width:26px;
       height:4px;
       background: var(--chalk);
       border-radius:2px;
@@ -197,84 +196,76 @@
       transform-origin:left center;
     }
 
-    /* 50er: Jass-Style Schrägstriche und Kreuz (2 Schrägstriche) */
-    .tally50{
-      width:100%;
-      display:flex;
-      align-items:flex-end;
-      flex-wrap:wrap;
-      gap:12px;
-      padding: 6px 2px 2px 2px;
-      overflow:hidden;
-    }
-
+    /* 50er: Kreuze DICHT (wenig Abstand zwischen Kreuzen) */
     .mark50{
-      width:34px;
-      height:48px;
+      width:16px;   /* schmal */
+      height:44px;
       position:relative;
       opacity:.95;
       flex: 0 0 auto;
+      margin-right:1px; /* noch dichter */
     }
-
     .slash{
       position:absolute;
       left:50%;
       top:4px;
       width:4px;
-      height:42px;
+      height:38px;
       background: var(--chalk);
       border-radius:2px;
       filter: drop-shadow(0 1px 0 rgba(0,0,0,.25));
-      transform-origin: center;
+      transform-origin:center;
     }
-    /* wie Kreidestrich: leicht schräg */
-    .slash.fwd{ transform: translateX(-50%) rotate(-28deg); } /* / */
-    .slash.back{ transform: translateX(-50%) rotate(28deg); } /* \ */
+    .slash.fwd{ transform: translateX(-54%) rotate(-20deg); }
+    .slash.back{ transform: translateX(-46%) rotate(20deg); }
 
-    /* Rest-Spalte */
+    /* Rest-Box nur oben rechts */
     .restCol{
       border:1px solid var(--line);
       border-radius:18px;
       background: var(--glass);
-      padding:10px;
+      padding:8px;
       display:flex;
       flex-direction:column;
-      gap:10px;
+      gap:8px;
       min-height:0;
-      justify-content:flex-end;
+      justify-content:flex-start;
     }
-
     .restValue{
       text-align:right;
       font-weight:1000;
-      font-size:18px;
-      min-height: 22px;
+      font-size:15px;
+      min-height: 18px;
       opacity:.95;
     }
-
-    input[type="number"]{
+    input[type="text"]{
       width:100%;
       border:1px solid var(--line);
       background: rgba(0,0,0,.22);
       color: var(--chalk);
-      padding:12px 10px;
+      padding:10px 7px;
       border-radius:12px;
       font-weight:900;
-      font-size:16px;
+      font-size:13px;
       outline:none;
     }
-
-    /* leer statt 0 anzeigen */
     .mutedEmpty{ opacity:0; }
 
+    /* Positionierung im Grid */
+    .z100{ grid-column:1; grid-row:1; }
+    .rest{ grid-column:2; grid-row:1; }
+    .z50{ grid-column:1 / 3; grid-row:2; }  /* spannt voll bis rechts */
+    .z20{ grid-column:1 / 3; grid-row:3; }  /* spannt voll bis rechts */
+
     @media (max-width: 420px){
-      .teamPanel{ grid-template-columns: 1fr 132px; padding:10px; }
-      .sumChip{ font-size:16px; padding:7px 10px; }
-      .group{ height:44px; }
-      .stroke{ height:44px; }
-      .mark50{ height:44px; width:32px; }
-      .slash{ height:38px; }
-      button{ min-width: 110px; }
+      .teamPanel{ grid-template-columns: 1fr 78px; gap:7px; padding:9px; }
+      .sumChip{ font-size:15px; }
+      .group{ width:22px; height:42px; }
+      .stroke{ height:42px; }
+      .diag{ width:24px; }
+      .mark50{ width:15px; height:42px; }
+      .slash{ height:36px; }
+      .write{ gap:5px; }
     }
   </style>
 </head>
@@ -292,32 +283,26 @@
 
       <!-- OBEN (Gegenspieler, auf dem Kopf) -->
       <div class="teamPanel top" data-team="A" aria-label="Oben">
-        <div class="leftZones">
-          <div class="zone" data-team="A" data-val="100"><div class="tally" id="a100Tally"></div></div>
-          <div class="zone" data-team="A" data-val="50"><div class="tally50" id="a50Tally"></div></div>
-          <div class="zone" data-team="A" data-val="20"><div class="tally" id="a20Tally"></div></div>
-        </div>
-
-        <div class="restCol">
+        <div class="zone z100" data-team="A" data-val="100"><div class="write" id="a100W"></div></div>
+        <div class="restCol rest">
           <div class="restValue" id="restA"></div>
-          <input id="restInputA" type="number" inputmode="numeric" placeholder="Neuer Restbetrag" />
+          <input id="restInputA" type="text" inputmode="text" placeholder="Neuer Restbetrag" autocomplete="off" />
         </div>
+        <div class="zone z50" data-team="A" data-val="50"><div class="write" id="a50W"></div></div>
+        <div class="zone z20" data-team="A" data-val="20"><div class="write" id="a20W"></div></div>
       </div>
 
       <div class="divider"></div>
 
       <!-- UNTEN (du) -->
       <div class="teamPanel" data-team="B" aria-label="Unten">
-        <div class="leftZones">
-          <div class="zone" data-team="B" data-val="100"><div class="tally" id="b100Tally"></div></div>
-          <div class="zone" data-team="B" data-val="50"><div class="tally50" id="b50Tally"></div></div>
-          <div class="zone" data-team="B" data-val="20"><div class="tally" id="b20Tally"></div></div>
-        </div>
-
-        <div class="restCol">
+        <div class="zone z100" data-team="B" data-val="100"><div class="write" id="b100W"></div></div>
+        <div class="restCol rest">
           <div class="restValue" id="restB"></div>
-          <input id="restInputB" type="number" inputmode="numeric" placeholder="Neuer Restbetrag" />
+          <input id="restInputB" type="text" inputmode="text" placeholder="Neuer Restbetrag" autocomplete="off" />
         </div>
+        <div class="zone z50" data-team="B" data-val="50"><div class="write" id="b50W"></div></div>
+        <div class="zone z20" data-team="B" data-val="20"><div class="write" id="b20W"></div></div>
       </div>
     </div>
   </div>
@@ -339,15 +324,19 @@
         restB: document.getElementById('restB'),
         restInputA: document.getElementById('restInputA'),
         restInputB: document.getElementById('restInputB'),
+
+        a100W: document.getElementById('a100W'),
+        a50W: document.getElementById('a50W'),
+        a20W: document.getElementById('a20W'),
+        b100W: document.getElementById('b100W'),
+        b50W: document.getElementById('b50W'),
+        b20W: document.getElementById('b20W'),
       };
 
       function clampMinZero(n){ return Math.max(0, n); }
+      function teamSum(t){ return (t.c100*100) + (t.c50*50) + (t.c20*20) + (t.rest || 0); }
 
-      function teamSum(t){
-        return (t.c100*100) + (t.c50*50) + (t.c20*20) + (t.rest || 0);
-      }
-
-      // 100/20: klassische 5er-Striche
+      // 5er-Striche (100/20)
       function makeTallyGroup(countInGroup){
         const g = document.createElement('div');
         g.className = 'group';
@@ -359,34 +348,19 @@
         return g;
       }
 
-      function renderTally(containerId, n){
-        const host = document.getElementById(containerId);
-        host.innerHTML = "";
+      function renderTalliesTo(hostEl, n){
+        hostEl.innerHTML = "";
         if(!n || n <= 0) return;
 
-        const maxGroups = 10;
         const fullGroups = Math.floor(n / 5);
         const rest = n % 5;
 
-        const groupsToShow = Math.min(fullGroups, maxGroups);
-        for(let i=0;i<groupsToShow;i++){
-          host.appendChild(makeTallyGroup(5));
-        }
-        if(fullGroups < maxGroups && rest > 0){
-          host.appendChild(makeTallyGroup(rest));
-        } else if(fullGroups >= maxGroups){
-          const dots = document.createElement('div');
-          dots.style.opacity = ".7";
-          dots.style.fontWeight = "1000";
-          dots.style.fontSize = "18px";
-          dots.textContent = "…";
-          host.appendChild(dots);
-        }
+        for(let i=0; i<fullGroups; i++) hostEl.appendChild(makeTallyGroup(5));
+        if(rest > 0) hostEl.appendChild(makeTallyGroup(rest));
       }
 
-      // 50er: / und Kreuz aus 2 Kreidestrichen (X)
+      // 50er: dichtes Kreuz / slash
       function makeMark50(type){
-        // type: "slash" | "cross"
         const m = document.createElement('div');
         m.className = 'mark50';
 
@@ -402,35 +376,15 @@
         return m;
       }
 
-      function renderTally50(containerId, n){
-        const host = document.getElementById(containerId);
-        host.innerHTML = "";
+      function render50To(hostEl, n){
+        hostEl.innerHTML = "";
         if(!n || n <= 0) return;
 
-        const pairs = Math.floor(n / 2); // jedes Paar = Kreuz (2 Striche)
-        const odd = n % 2;               // Rest = einzelner Strich
+        const pairs = Math.floor(n / 2);
+        const odd = n % 2;
 
-        const maxMarks = 10;
-        let shown = 0;
-
-        for(let i=0; i<pairs && shown<maxMarks; i++){
-          host.appendChild(makeMark50('cross'));
-          shown++;
-        }
-
-        if(odd === 1 && shown < maxMarks){
-          host.appendChild(makeMark50('slash'));
-          shown++;
-        }
-
-        if((pairs + odd) > maxMarks){
-          const dots = document.createElement('div');
-          dots.style.opacity = ".7";
-          dots.style.fontWeight = "1000";
-          dots.style.fontSize = "18px";
-          dots.textContent = "…";
-          host.appendChild(dots);
-        }
+        for(let i=0;i<pairs;i++) hostEl.appendChild(makeMark50('cross'));
+        if(odd === 1) hostEl.appendChild(makeMark50('slash'));
       }
 
       function setMaybeEmptyText(elm, value){
@@ -444,13 +398,13 @@
       }
 
       function render(){
-        renderTally('a100Tally', state.A.c100);
-        renderTally50('a50Tally', state.A.c50);
-        renderTally('a20Tally', state.A.c20);
+        renderTalliesTo(el.a100W, state.A.c100);
+        render50To(el.a50W, state.A.c50);
+        renderTalliesTo(el.a20W, state.A.c20);
 
-        renderTally('b100Tally', state.B.c100);
-        renderTally50('b50Tally', state.B.c50);
-        renderTally('b20Tally', state.B.c20);
+        renderTalliesTo(el.b100W, state.B.c100);
+        render50To(el.b50W, state.B.c50);
+        renderTalliesTo(el.b20W, state.B.c20);
 
         setMaybeEmptyText(el.restA, state.A.rest);
         setMaybeEmptyText(el.restB, state.B.rest);
@@ -486,29 +440,29 @@
         render();
       });
 
-      // Rest: ersetzt (nicht addieren) – Enter oder blur
-      function commitRest(teamKey, inputEl){
-        const raw = (inputEl.value ?? "").toString().trim();
-        if(raw === "") return;
-        const n = Number(raw);
-        if(Number.isNaN(n)) return;
+      function parseRest(text){
+        const s = (text ?? "").toString().trim().replace(",", ".");
+        if(!s) return null;
+        const n = Number(s);
+        if(Number.isNaN(n)) return null;
+        return n;
+      }
 
-        state[teamKey].rest = n;
+      function commitRest(teamKey, inputEl){
+        const n = parseRest(inputEl.value);
+        if(n === null) return;
+        state[teamKey].rest = n; // ersetzt
         inputEl.value = "";
         render();
       }
 
-      el.restInputA.addEventListener('keydown', (e) => {
-        if(e.key === 'Enter'){ e.preventDefault(); commitRest('A', el.restInputA); }
-      });
-      el.restInputB.addEventListener('keydown', (e) => {
-        if(e.key === 'Enter'){ e.preventDefault(); commitRest('B', el.restInputB); }
+      [ [el.restInputA,'A'], [el.restInputB,'B'] ].forEach(([inp, team]) => {
+        inp.addEventListener('keydown', (e) => {
+          if(e.key === 'Enter'){ e.preventDefault(); commitRest(team, inp); inp.blur(); }
+        });
+        inp.addEventListener('blur', () => commitRest(team, inp));
       });
 
-      el.restInputA.addEventListener('blur', () => commitRest('A', el.restInputA));
-      el.restInputB.addEventListener('blur', () => commitRest('B', el.restInputB));
-
-      // Reset mit Bestätigung
       el.btnReset.addEventListener('click', () => {
         const ok = confirm("Wirklich alles zurücksetzen?");
         if(!ok) return;

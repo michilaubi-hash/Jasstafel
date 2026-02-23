@@ -14,7 +14,6 @@
       --glass:rgba(0,0,0,.18);
       --danger: rgba(255,120,120,.75);
 
-      /* Modal readability */
       --panel: rgba(8,12,10,.94);
       --panel2: rgba(0,0,0,.88);
     }
@@ -95,14 +94,7 @@
       min-height:0;
     }
 
-    .divider{
-      height:2px;
-      background: var(--line-strong);
-      flex:0 0 auto;
-      position:relative;
-    }
-
-    /* Punktestand-Chips: weiter weg vom Zentrum => kein Overlap mit mittigen Buttons */
+    /* Punktestand-Chips: weiter weg vom Zentrum */
     .sumChip{
       position:absolute;
       left:50%;
@@ -128,20 +120,10 @@
     .sumChip.bottom{
       top: calc(50% + 52px);
     }
+    .sumLabel{ opacity:.85; font-weight:900; font-size:13px; letter-spacing:.15px; }
+    .sumNum{ font-variant-numeric: tabular-nums; font-weight:1000; font-size:16px; }
 
-    .sumLabel{
-      opacity:.85;
-      font-weight:900;
-      font-size:13px;
-      letter-spacing:.15px;
-    }
-    .sumNum{
-      font-variant-numeric: tabular-nums;
-      font-weight:1000;
-      font-size:16px;
-    }
-
-    /* ZENTRALE Buttons: gut sichtbar, sicher nicht überlappend */
+    /* ZENTRALE Buttons */
     .midControls{
       position:absolute;
       left:50%;
@@ -171,7 +153,8 @@
     }
     .midBtn.hidden{ display:none; }
 
-    /* Panels */
+    .divider{ height:2px; background: var(--line-strong); flex:0 0 auto; }
+
     .teamPanel{
       flex:1 1 0;
       display:grid;
@@ -181,7 +164,6 @@
       padding:10px;
       min-height:0;
     }
-
     .teamPanel.top{
       transform: rotate(180deg);
       transform-origin: center;
@@ -216,55 +198,24 @@
     .write::-webkit-scrollbar{ display:none; }
 
     /* 100/20: 5er-Striche */
-    .group{
-      width:24px;
-      height:44px;
-      position:relative;
-      opacity:.95;
-      flex: 0 0 auto;
-    }
+    .group{ width:24px; height:44px; position:relative; opacity:.95; flex: 0 0 auto; }
     .stroke{
-      position:absolute;
-      bottom:0;
-      width:3px;
-      height:44px;
-      background: var(--chalk);
-      border-radius:2px;
+      position:absolute; bottom:0; width:3px; height:44px;
+      background: var(--chalk); border-radius:2px;
       filter: drop-shadow(0 1px 0 rgba(0,0,0,.25));
     }
-    .s1{ left:1px; }
-    .s2{ left:7px; }
-    .s3{ left:13px; }
-    .s4{ left:19px; }
+    .s1{ left:1px; } .s2{ left:7px; } .s3{ left:13px; } .s4{ left:19px; }
     .diag{
-      position:absolute;
-      left:-1px;
-      bottom:7px;
-      width:26px;
-      height:4px;
-      background: var(--chalk);
-      border-radius:2px;
-      transform: rotate(-28deg);
-      transform-origin:left center;
+      position:absolute; left:-1px; bottom:7px; width:26px; height:4px;
+      background: var(--chalk); border-radius:2px;
+      transform: rotate(-28deg); transform-origin:left center;
     }
 
-    /* 50er: Kreuze DICHT */
-    .mark50{
-      width:16px;
-      height:44px;
-      position:relative;
-      opacity:.95;
-      flex: 0 0 auto;
-      margin-right:1px;
-    }
+    /* 50er: Kreuze dicht */
+    .mark50{ width:16px; height:44px; position:relative; opacity:.95; flex: 0 0 auto; margin-right:1px; }
     .slash{
-      position:absolute;
-      left:50%;
-      top:4px;
-      width:4px;
-      height:38px;
-      background: var(--chalk);
-      border-radius:2px;
+      position:absolute; left:50%; top:4px; width:4px; height:38px;
+      background: var(--chalk); border-radius:2px;
       filter: drop-shadow(0 1px 0 rgba(0,0,0,.25));
       transform-origin:center;
     }
@@ -312,7 +263,7 @@
     .mode-improved .zone{ pointer-events:none; }
     .mode-improved .restCol input{ display:none; }
 
-    /* Modal */
+    /* ---------- MODALS (kompakter + ohne Scroll nötig) ---------- */
     .modalBackdrop{
       position:fixed;
       inset:0;
@@ -320,53 +271,51 @@
       display:none;
       align-items:center;
       justify-content:center;
-      padding: 16px;
+      padding: 10px;
       z-index: 50;
     }
     .modalBackdrop.open{ display:flex; }
 
     .modal{
-      width: min(580px, 100%);
+      width: min(520px, 100%);
       border:1px solid rgba(255,255,255,.18);
       background: linear-gradient(180deg, var(--panel), var(--panel2));
-      border-radius: 22px;
+      border-radius: 18px;
       box-shadow: 0 24px 80px rgba(0,0,0,.70);
       overflow:hidden;
     }
     .modalHeader{
-      padding: 14px 16px;
+      padding: 10px 12px;
       display:flex;
       align-items:center;
       justify-content:space-between;
       gap: 10px;
       border-bottom: 1px solid rgba(255,255,255,.12);
     }
-    .modalTitle{
-      font-weight:1000;
-      letter-spacing:.2px;
-    }
+    .modalTitle{ font-weight:1000; letter-spacing:.2px; font-size:14px; }
     .modalClose{
       min-width:auto;
-      padding: 8px 10px;
+      padding: 7px 10px;
       border-radius: 12px;
       background: rgba(255,255,255,.08);
       border-color: rgba(255,255,255,.18);
+      font-size: 13px;
     }
+
     .modalBody{
-      padding: 14px 16px 16px 16px;
+      padding: 10px 12px;
       display:flex;
       flex-direction:column;
-      gap: 12px;
+      gap: 8px;
     }
     .field{
-      flex: 1 1 180px;
       display:flex;
       flex-direction:column;
-      gap:6px;
+      gap:5px;
     }
     .label{
       font-weight: 900;
-      font-size: 12px;
+      font-size: 11px;
       opacity: .85;
       letter-spacing: .1px;
     }
@@ -375,30 +324,40 @@
       border:1px solid rgba(255,255,255,.16);
       background: rgba(255,255,255,.06);
       color: var(--chalk);
-      padding: 10px 10px;
+      padding: 9px 10px;
       border-radius: 12px;
       font-weight: 900;
       font-size: 14px;
       outline:none;
     }
 
+    /* 2-spaltiges Layout, damit weniger Höhe */
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:8px;
+      align-items:end;
+    }
+
     .checks{
       display:flex;
-      flex-direction:column;
-      gap:8px;
+      gap:10px;
       border:1px solid rgba(255,255,255,.12);
       background: rgba(255,255,255,.04);
-      padding: 10px;
-      border-radius: 16px;
+      padding: 8px 10px;
+      border-radius: 14px;
+      align-items:center;
+      justify-content:space-between;
     }
     .check{
       display:flex;
       align-items:center;
-      gap:10px;
+      gap:8px;
       font-weight: 900;
-      font-size: 13px;
+      font-size: 12px;
       opacity: .95;
       user-select:none;
+      white-space:nowrap;
     }
     .check input{ width:18px; height:18px; }
 
@@ -406,8 +365,9 @@
       display:flex;
       gap: 10px;
       justify-content:flex-end;
-      padding: 12px 16px 16px 16px;
+      padding: 10px 12px;
       border-top: 1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.12);
     }
     .primary{
       border-color: rgba(255,255,255,.40);
@@ -417,34 +377,34 @@
     .hintBox{
       border:1px solid rgba(255,255,255,.12);
       background: rgba(0,0,0,.22);
-      padding: 10px;
-      border-radius: 16px;
+      padding: 8px 10px;
+      border-radius: 14px;
       display:flex;
       flex-direction:column;
-      gap:6px;
+      gap:4px;
       font-weight:900;
-      font-size:13px;
-      line-height:1.25;
+      font-size:12px;
+      line-height:1.18;
       font-variant-numeric: tabular-nums;
     }
     .hintRow{ opacity:.92; }
-    .hintSmall{ opacity:.75; font-size:12px; }
+    .hintSmall{ opacity:.75; font-size:11px; }
 
     /* segmented */
     .seg{
       display:flex;
       gap:8px;
       width:100%;
-      flex-wrap: wrap;
+      flex-wrap:nowrap;
     }
     .segBtn{
       flex:1 1 0;
       min-width: 0;
-      padding: 10px 10px;
+      padding: 9px 8px;
       border-radius: 12px;
       border: 1px solid rgba(255,255,255,.14);
       background: rgba(255,255,255,.06);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 1000;
       text-align:center;
     }
@@ -453,6 +413,10 @@
       background: rgba(255,255,255,.14);
       box-shadow: 0 8px 18px rgba(0,0,0,.35);
     }
+
+    /* Weis-Punkte: 5 Buttons -> wrap in 2 Reihen, spart Breite ohne viel Höhe */
+    .segWrap{ flex-wrap:wrap; }
+    .segWrap .segBtn{ flex: 1 1 30%; }
 
     @media (max-width: 420px){
       .teamPanel{ grid-template-columns: 1fr 78px; gap:7px; padding:9px; }
@@ -463,8 +427,13 @@
       .mark50{ width:15px; height:42px; }
       .slash{ height:36px; }
       .write{ gap:5px; }
-      button{ min-width: 104px; }
-      .midBtn{ padding: 11px 14px; }
+      button{ min-width: 96px; }
+      .midBtn{ padding: 11px 14px; font-size:13px; }
+
+      .modal{ width: 100%; border-radius: 16px; }
+      .grid2{ grid-template-columns: 1fr; } /* auf sehr kleinen Screens untereinander */
+      .checks{ flex-direction:column; align-items:flex-start; gap:8px; }
+      .segWrap .segBtn{ flex: 1 1 45%; }
     }
   </style>
 </head>
@@ -535,11 +504,12 @@
           </select>
         </div>
         <div class="hintBox">
-          <div class="hintRow">Verbesserte Zählweise: + Runde / + Weis → Striche werden nur dazugefügt (bestehende Striche bleiben).</div>
-          <div class="hintRow">Klassische Tafel: Striche antippen + Restbetrag manuell.</div>
+          <div class="hintRow">Verbessert: + Runde / + Weis → Striche werden addiert (bestehende bleiben).</div>
+          <div class="hintRow">Zusatzregel: sobald Rest ≥ 20 → 20 wegnehmen + 20er-Strich hinzufügen.</div>
         </div>
       </div>
       <div class="modalFooter">
+        <button id="btnCloseSettings2">Schliessen</button>
         <button id="btnSaveSettings" class="primary">Speichern</button>
       </div>
     </div>
@@ -554,11 +524,23 @@
       </div>
 
       <div class="modalBody">
-        <div class="field">
-          <div class="label">Für welches Team?</div>
-          <div class="seg" id="teamSegRound">
-            <button class="segBtn active" data-team="B" type="button">Unten</button>
-            <button class="segBtn" data-team="A" type="button">Oben</button>
+        <div class="grid2">
+          <div class="field">
+            <div class="label">Team</div>
+            <div class="seg" id="teamSegRound">
+              <button class="segBtn active" data-team="B" type="button">Unten</button>
+              <button class="segBtn" data-team="A" type="button">Oben</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="label">Multiplikator</div>
+            <div class="seg" id="multSegRound">
+              <button class="segBtn active" data-m="1" type="button">1×</button>
+              <button class="segBtn" data-m="2" type="button">2×</button>
+              <button class="segBtn" data-m="3" type="button">3×</button>
+              <button class="segBtn" data-m="4" type="button">4×</button>
+            </div>
           </div>
         </div>
 
@@ -567,24 +549,14 @@
           <input class="num" id="inpPoints" inputmode="numeric" autocomplete="off" placeholder="z.B. 84" />
         </div>
 
-        <div class="field">
-          <div class="label">Multiplikator</div>
-          <div class="seg" id="multSegRound">
-            <button class="segBtn active" data-m="1" type="button">1×</button>
-            <button class="segBtn" data-m="2" type="button">2×</button>
-            <button class="segBtn" data-m="3" type="button">3×</button>
-            <button class="segBtn" data-m="4" type="button">4×</button>
-          </div>
-        </div>
-
         <div class="checks">
           <label class="check">
             <input type="checkbox" id="chkAutoOpp" checked />
-            Gegner automatisch ergänzen (Total 157)
+            Auto-Gegner (157)
           </label>
           <label class="check">
             <input type="checkbox" id="chkMatch" />
-            Match (257 / 0)
+            Match (257/0)
           </label>
         </div>
 
@@ -592,6 +564,7 @@
       </div>
 
       <div class="modalFooter">
+        <button id="btnCloseRound2">Schliessen</button>
         <button id="btnAddRound" class="primary">Hinzufügen</button>
       </div>
     </div>
@@ -606,17 +579,29 @@
       </div>
 
       <div class="modalBody">
-        <div class="field">
-          <div class="label">Für welches Team?</div>
-          <div class="seg" id="teamSegWeis">
-            <button class="segBtn active" data-team="B" type="button">Unten</button>
-            <button class="segBtn" data-team="A" type="button">Oben</button>
+        <div class="grid2">
+          <div class="field">
+            <div class="label">Team</div>
+            <div class="seg" id="teamSegWeis">
+              <button class="segBtn active" data-team="B" type="button">Unten</button>
+              <button class="segBtn" data-team="A" type="button">Oben</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <div class="label">Multiplikator</div>
+            <div class="seg" id="multSegWeis">
+              <button class="segBtn active" data-m="1" type="button">1×</button>
+              <button class="segBtn" data-m="2" type="button">2×</button>
+              <button class="segBtn" data-m="3" type="button">3×</button>
+              <button class="segBtn" data-m="4" type="button">4×</button>
+            </div>
           </div>
         </div>
 
         <div class="field">
           <div class="label">Weis Punkte</div>
-          <div class="seg" id="weisSeg">
+          <div class="seg segWrap" id="weisSeg">
             <button class="segBtn active" data-w="20" type="button">20</button>
             <button class="segBtn" data-w="50" type="button">50</button>
             <button class="segBtn" data-w="100" type="button">100</button>
@@ -625,20 +610,11 @@
           </div>
         </div>
 
-        <div class="field">
-          <div class="label">Multiplikator</div>
-          <div class="seg" id="multSegWeis">
-            <button class="segBtn active" data-m="1" type="button">1×</button>
-            <button class="segBtn" data-m="2" type="button">2×</button>
-            <button class="segBtn" data-m="3" type="button">3×</button>
-            <button class="segBtn" data-m="4" type="button">4×</button>
-          </div>
-        </div>
-
         <div class="hintBox" id="weisHint"></div>
       </div>
 
       <div class="modalFooter">
+        <button id="btnCloseWeis2">Schliessen</button>
         <button id="btnAddWeis" class="primary">Hinzufügen</button>
       </div>
     </div>
@@ -646,28 +622,25 @@
 
   <script>
     (function(){
-      const LS_KEY_MODE = "jass_mode_v5";
+      const LS_KEY_MODE = "jass_mode_v6";
 
       const state = {
         mode: "improved", // default
         subtract: false,
 
-        // board state = strokes already written (must remain), plus rest
+        // board state = strokes already written + rest
         A: { c100: 0, c50: 0, c20: 0, rest: 0 },
         B: { c100: 0, c50: 0, c20: 0, rest: 0 },
 
         ui: {
-          // round modal
           roundTeam: "B",
           roundMult: 1,
-
-          // weis modal
           weisTeam: "B",
           weisValue: 20,
           weisMult: 1
         },
 
-        // undo stack: last action only (kept simple)
+        // undo snapshot of whole board (last action)
         lastAction: null
       };
 
@@ -700,12 +673,14 @@
         // settings modal
         settingsModal: document.getElementById('settingsModal'),
         btnCloseSettings: document.getElementById('btnCloseSettings'),
+        btnCloseSettings2: document.getElementById('btnCloseSettings2'),
         btnSaveSettings: document.getElementById('btnSaveSettings'),
         modeSelect: document.getElementById('modeSelect'),
 
         // round modal
         roundModal: document.getElementById('roundModal'),
         btnCloseRound: document.getElementById('btnCloseRound'),
+        btnCloseRound2: document.getElementById('btnCloseRound2'),
         btnAddRound: document.getElementById('btnAddRound'),
         inpPoints: document.getElementById('inpPoints'),
         chkAutoOpp: document.getElementById('chkAutoOpp'),
@@ -717,6 +692,7 @@
         // weis modal
         weisModal: document.getElementById('weisModal'),
         btnCloseWeis: document.getElementById('btnCloseWeis'),
+        btnCloseWeis2: document.getElementById('btnCloseWeis2'),
         btnAddWeis: document.getElementById('btnAddWeis'),
         weisHint: document.getElementById('weisHint'),
         teamSegWeis: document.getElementById('teamSegWeis'),
@@ -727,6 +703,16 @@
       // ---------- helpers ----------
       function clampMinZero(n){ return Math.max(0, n); }
       function teamSum(t){ return (t.c100*100) + (t.c50*50) + (t.c20*20) + (t.rest || 0); }
+
+      function cloneTeam(t){ return { c100:t.c100, c50:t.c50, c20:t.c20, rest:t.rest }; }
+      function snapshotBoard(){
+        return { A: cloneTeam(state.A), B: cloneTeam(state.B) };
+      }
+      function restoreBoard(snap){
+        if(!snap) return;
+        state.A = cloneTeam(snap.A);
+        state.B = cloneTeam(snap.B);
+      }
 
       function openModal(backdropEl){
         backdropEl.classList.add('open');
@@ -753,7 +739,19 @@
         return Math.round(n);
       }
 
-      // Decompose ONLY the added points into strokes/rest (largest possible for the ROUND)
+      // Zusatzregel: sobald Rest >= 20 -> 20 weg + 20er-Strich +1 (wiederholen)
+      function normalizeRestTo20(team){
+        team.rest = Number(team.rest || 0);
+        if(!Number.isFinite(team.rest)) team.rest = 0;
+        while(team.rest >= 20){
+          team.rest -= 20;
+          team.c20 += 1;
+        }
+        team.rest = clampMinZero(team.rest);
+        team.c20 = clampMinZero(team.c20);
+      }
+
+      // Decompose ONLY the added points into strokes/rest (largest possible for the DELTA)
       function decomposeDelta(points){
         let s = Math.max(0, Math.round(points || 0));
         const c100 = Math.floor(s / 100); s -= c100 * 100;
@@ -763,28 +761,20 @@
         return { c100, c50, c20, rest };
       }
 
-      // Add delta strokes (KEEP existing strokes as-is)
+      // Add delta strokes (KEEP existing strokes as-is), then apply rest>=20 rule
       function addDeltaToTeam(teamKey, delta){
-        state[teamKey].c100 += delta.c100;
-        state[teamKey].c50  += delta.c50;
-        state[teamKey].c20  += delta.c20;
-        state[teamKey].rest += delta.rest;
+        const t = state[teamKey];
+        t.c100 += delta.c100;
+        t.c50  += delta.c50;
+        t.c20  += delta.c20;
+        t.rest += delta.rest;
 
-        // Note: We do NOT normalize/carry over rest into 20/50/100 because user explicitly wants "do not rewrite existing".
-        // Rest is "Restbetrag" and can become > 19 or > 49 etc. That's fine per requirement.
+        t.c100 = clampMinZero(t.c100);
+        t.c50  = clampMinZero(t.c50);
+        t.c20  = clampMinZero(t.c20);
+        t.rest = clampMinZero(t.rest);
 
-        // But keep rest non-negative
-        state[teamKey].rest = clampMinZero(state[teamKey].rest);
-        state[teamKey].c100 = clampMinZero(state[teamKey].c100);
-        state[teamKey].c50 = clampMinZero(state[teamKey].c50);
-        state[teamKey].c20 = clampMinZero(state[teamKey].c20);
-      }
-
-      function subtractDeltaFromTeam(teamKey, delta){
-        state[teamKey].c100 = clampMinZero(state[teamKey].c100 - delta.c100);
-        state[teamKey].c50  = clampMinZero(state[teamKey].c50  - delta.c50);
-        state[teamKey].c20  = clampMinZero(state[teamKey].c20  - delta.c20);
-        state[teamKey].rest = clampMinZero((state[teamKey].rest || 0) - delta.rest);
+        normalizeRestTo20(t);
       }
 
       // ---------- tally drawing ----------
@@ -872,6 +862,7 @@
         if(n === null) return;
         state[teamKey].rest = n; // replaces rest
         inputEl.value = "";
+        normalizeRestTo20(state[teamKey]);
         render();
       }
 
@@ -886,7 +877,7 @@
       function updateRoundHint(){
         const mult = state.ui.roundMult;
         const isMatch = el.chkMatch.checked;
-        const autoOpp = el.chkAutoOpp.checked; // 157 rule
+        const autoOpp = el.chkAutoOpp.checked;
         const teamKey = state.ui.roundTeam;
 
         if(isMatch){
@@ -898,7 +889,7 @@
           el.roundHint.innerHTML = `
             <div class="hintRow">Eigen: ${ownBase} × ${mult} = ${ownAdd}</div>
             <div class="hintRow">Gegner: 0</div>
-            <div class="hintSmall">Match · Striche werden addiert (bestehende bleiben).</div>
+            <div class="hintSmall">Rest-Regel aktiv: Rest ≥ 20 → wird zu 20er-Strich.</div>
           `;
           return;
         }
@@ -910,7 +901,7 @@
         if(pts === null){
           el.roundHint.innerHTML = `
             <div class="hintRow">Eigen: —</div>
-            <div class="hintRow">Gegner: ${autoOpp ? "157 − Eigen (automatisch)" : "—"}</div>
+            <div class="hintRow">Gegner: ${autoOpp ? "157 − Eigen (auto)" : "—"}</div>
             <div class="hintSmall">Multiplikator: ×${mult}</div>
           `;
           return;
@@ -925,12 +916,13 @@
           el.roundHint.innerHTML = `
             <div class="hintRow">Eigen: ${ownBase} × ${mult} = ${ownAdd}</div>
             <div class="hintRow">Gegner: ${oppBase} × ${mult} = ${oppAdd}</div>
-            <div class="hintSmall">Auto-Gegner ergänzt immer auf 157.</div>
+            <div class="hintSmall">Rest-Regel aktiv: Rest ≥ 20 → wird zu 20er-Strich.</div>
           `;
         } else {
           el.roundHint.innerHTML = `
             <div class="hintRow">Eigen: ${ownBase} × ${mult} = ${ownAdd}</div>
             <div class="hintRow">Gegner: —</div>
+            <div class="hintSmall">Rest-Regel aktiv: Rest ≥ 20 → wird zu 20er-Strich.</div>
           `;
         }
       }
@@ -958,14 +950,11 @@
         const teamKey = state.ui.roundTeam;
         const oppKey = (teamKey === "A") ? "B" : "A";
 
-        let ownPointsBase;
-        let ownAdd;
+        let ownAdd = 0;
         let oppAdd = 0;
 
         if(isMatch){
-          ownPointsBase = 257;
           ownAdd = 257 * mult;
-          // opponent gets 0
         } else {
           const pts = parseNumber(el.inpPoints.value);
           if(pts === null){
@@ -976,47 +965,32 @@
             alert("Punkte müssen zwischen 0 und 257 liegen.");
             return;
           }
-          ownPointsBase = pts;
           ownAdd = pts * mult;
-
           if(autoOpp){
             const oppBase = Math.max(0, 157 - pts);
             oppAdd = oppBase * mult;
           }
         }
 
-        const ownDelta = decomposeDelta(ownAdd);
-        addDeltaToTeam(teamKey, ownDelta);
+        // snapshot for Undo (exact restore, incl. rest-carry behaviour)
+        state.lastAction = { prev: snapshotBoard() };
 
-        let oppDelta = null;
-        if(oppAdd > 0){
-          oppDelta = decomposeDelta(oppAdd);
-          addDeltaToTeam(oppKey, oppDelta);
-        }
-
-        // store undo action
-        state.lastAction = {
-          type: "round",
-          teamKey,
-          ownDelta,
-          oppKey: oppDelta ? oppKey : null,
-          oppDelta
-        };
-        render();
+        addDeltaToTeam(teamKey, decomposeDelta(ownAdd));
+        if(oppAdd > 0) addDeltaToTeam(oppKey, decomposeDelta(oppAdd));
 
         closeModal(el.roundModal);
+        render();
       }
 
       // ---------- Weis modal logic ----------
       function updateWeisHint(){
-        const teamKey = state.ui.weisTeam;
         const w = state.ui.weisValue;
         const m = state.ui.weisMult;
         const add = w * m;
 
         el.weisHint.innerHTML = `
           <div class="hintRow">Weis: ${w} × ${m} = ${add}</div>
-          <div class="hintSmall">Gegner wird nicht ergänzt · Striche werden addiert.</div>
+          <div class="hintSmall">Rest-Regel aktiv: Rest ≥ 20 → wird zu 20er-Strich.</div>
         `;
       }
 
@@ -1037,16 +1011,8 @@
         const teamKey = state.ui.weisTeam;
         const add = state.ui.weisValue * state.ui.weisMult;
 
-        const delta = decomposeDelta(add);
-        addDeltaToTeam(teamKey, delta);
-
-        state.lastAction = {
-          type: "weis",
-          teamKey,
-          ownDelta: delta,
-          oppKey: null,
-          oppDelta: null
-        };
+        state.lastAction = { prev: snapshotBoard() };
+        addDeltaToTeam(teamKey, decomposeDelta(add));
 
         closeModal(el.weisModal);
         render();
@@ -1054,14 +1020,8 @@
 
       // ---------- Undo ----------
       function undoLast(){
-        const a = state.lastAction;
-        if(!a) return;
-
-        subtractDeltaFromTeam(a.teamKey, a.ownDelta);
-        if(a.oppKey && a.oppDelta){
-          subtractDeltaFromTeam(a.oppKey, a.oppDelta);
-        }
-
+        if(!state.lastAction?.prev) return;
+        restoreBoard(state.lastAction.prev);
         state.lastAction = null;
         render();
       }
@@ -1145,15 +1105,16 @@
 
       // settings
       el.btnSettings.addEventListener('click', () => openModal(el.settingsModal));
-      el.btnCloseSettings.addEventListener('click', () => closeModal(el.settingsModal));
-      el.settingsModal.addEventListener('click', (e) => {
-        if(e.target === el.settingsModal) closeModal(el.settingsModal);
-      });
+      const closeSettings = () => closeModal(el.settingsModal);
+      el.btnCloseSettings.addEventListener('click', closeSettings);
+      el.btnCloseSettings2.addEventListener('click', closeSettings);
+      el.settingsModal.addEventListener('click', (e) => { if(e.target === el.settingsModal) closeSettings(); });
+
       el.btnSaveSettings.addEventListener('click', () => {
         const v = el.modeSelect.value;
         state.mode = (v === "classic") ? "classic" : "improved";
         saveMode();
-        closeModal(el.settingsModal);
+        closeSettings();
         render();
       });
 
@@ -1162,10 +1123,10 @@
       el.btnAddWeisCenter.addEventListener('click', openWeisModal);
 
       // round modal
-      el.btnCloseRound.addEventListener('click', () => closeModal(el.roundModal));
-      el.roundModal.addEventListener('click', (e) => {
-        if(e.target === el.roundModal) closeModal(el.roundModal);
-      });
+      const closeRound = () => closeModal(el.roundModal);
+      el.btnCloseRound.addEventListener('click', closeRound);
+      el.btnCloseRound2.addEventListener('click', closeRound);
+      el.roundModal.addEventListener('click', (e) => { if(e.target === el.roundModal) closeRound(); });
 
       el.teamSegRound.addEventListener('click', (e) => {
         const btn = e.target.closest('.segBtn');
@@ -1186,17 +1147,15 @@
       el.chkMatch.addEventListener('change', updateRoundHint);
       el.btnAddRound.addEventListener('click', addRound);
       el.inpPoints.addEventListener('keydown', (e) => {
-        if(e.key === "Enter"){
-          e.preventDefault();
-          addRound();
-        }
+        if(e.key === "Enter"){ e.preventDefault(); addRound(); }
       });
 
       // weis modal
-      el.btnCloseWeis.addEventListener('click', () => closeModal(el.weisModal));
-      el.weisModal.addEventListener('click', (e) => {
-        if(e.target === el.weisModal) closeModal(el.weisModal);
-      });
+      const closeWeis = () => closeModal(el.weisModal);
+      el.btnCloseWeis.addEventListener('click', closeWeis);
+      el.btnCloseWeis2.addEventListener('click', closeWeis);
+      el.weisModal.addEventListener('click', (e) => { if(e.target === el.weisModal) closeWeis(); });
+
       el.teamSegWeis.addEventListener('click', (e) => {
         const btn = e.target.closest('.segBtn');
         if(!btn) return;
@@ -1223,9 +1182,9 @@
       // ESC closes modals
       document.addEventListener('keydown', (e) => {
         if(e.key === "Escape"){
-          closeModal(el.settingsModal);
-          closeModal(el.roundModal);
-          closeModal(el.weisModal);
+          closeSettings();
+          closeRound();
+          closeWeis();
         }
       });
 

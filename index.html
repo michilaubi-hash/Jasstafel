@@ -12,8 +12,11 @@
       --line:rgba(243,246,241,.26);
       --line-strong:rgba(243,246,241,.42);
       --glass:rgba(0,0,0,.18);
+      --glass-strong: rgba(0,0,0,.42);
       --danger: rgba(255,120,120,.75);
       --ok: rgba(140,255,170,.65);
+      --panel: rgba(8,12,10,.92);
+      --panel2: rgba(0,0,0,.86);
     }
 
     *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
@@ -96,6 +99,7 @@
       height:2px;
       background: var(--line-strong);
       flex:0 0 auto;
+      position:relative;
     }
 
     .sumChip{
@@ -135,19 +139,27 @@
       font-size:16px;
     }
 
-    /* + Buttons für verbesserte Zählweise */
-    .plusBtn{
+    /* ZENTRALER +Runde Button (nur im verbesserten Modus sichtbar) */
+    .centerAddWrap{
+      position:absolute;
+      left:50%;
+      top:50%;
+      transform: translate(-50%, -50%);
+      z-index: 5;
+      pointer-events:none;
+    }
+    .centerAdd{
       pointer-events:auto;
-      border:1px solid var(--line);
+      border:1px solid var(--line-strong);
       background: rgba(255,255,255,.10);
-      padding:7px 10px;
+      padding:10px 14px;
       border-radius:999px;
       font-weight:1000;
       font-size:14px;
       min-width:auto;
+      box-shadow: 0 10px 22px rgba(0,0,0,.35);
     }
-    .plusBtn:active{ transform: scale(.98); }
-    .plusBtn.hidden{ display:none; }
+    .centerAdd.hidden{ display:none; }
 
     /* WICHTIG: Rest sitzt NUR in Zeile 1 rechts.
        50/20 spannen über beide Spalten => bis ganz nach rechts. */
@@ -184,7 +196,7 @@
     .write{
       width:100%;
       display:flex;
-      align-items:center;
+      align-items:flex-end;
       gap:6px;
       padding: 4px 2px 2px 2px;
       overflow-x:auto;
@@ -194,30 +206,6 @@
       scrollbar-width:none;
     }
     .write::-webkit-scrollbar{ display:none; }
-
-    /* History-Chips (verbesserte Zählweise) */
-    .chip{
-      flex: 0 0 auto;
-      border: 1px solid var(--line);
-      background: rgba(0,0,0,.20);
-      padding: 6px 9px;
-      border-radius: 999px;
-      font-weight: 900;
-      font-size: 12px;
-      white-space: nowrap;
-      opacity: .95;
-    }
-    .chip.ok{ border-color: var(--ok); }
-    .chip.mute{ opacity:.65; }
-
-    .hint{
-      opacity:.70;
-      font-weight:900;
-      font-size:12px;
-      letter-spacing:.1px;
-      padding: 2px 4px;
-      white-space:nowrap;
-    }
 
     /* 100/20: 5er-Striche */
     .group{
@@ -314,19 +302,15 @@
     .z50{ grid-column:1 / 3; grid-row:2; }
     .z20{ grid-column:1 / 3; grid-row:3; }
 
-    /* Modus: verbesserte Zählweise => Klickfelder inaktiv, Rest-Inputs ausblenden, History anzeigen */
-    .mode-improved .zone{
-      pointer-events:none;
-    }
-    .mode-improved .restCol input{
-      display:none;
-    }
+    /* Modus: verbesserte Zählweise */
+    .mode-improved .zone{ pointer-events:none; }
+    .mode-improved .restCol input{ display:none; }
 
     /* Modal */
     .modalBackdrop{
       position:fixed;
       inset:0;
-      background: rgba(0,0,0,.55);
+      background: rgba(0,0,0,.72);
       display:none;
       align-items:center;
       justify-content:center;
@@ -337,12 +321,10 @@
 
     .modal{
       width: min(560px, 100%);
-      border:1px solid var(--line-strong);
-      background:
-        radial-gradient(900px 500px at 30% 20%, rgba(255,255,255,.05), transparent 60%),
-        linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.35));
+      border:1px solid rgba(255,255,255,.18);
+      background: linear-gradient(180deg, var(--panel), var(--panel2));
       border-radius: 22px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.55);
+      box-shadow: 0 24px 80px rgba(0,0,0,.70);
       overflow:hidden;
     }
     .modalHeader{
@@ -351,7 +333,7 @@
       align-items:center;
       justify-content:space-between;
       gap: 10px;
-      border-bottom: 1px solid var(--line);
+      border-bottom: 1px solid rgba(255,255,255,.12);
     }
     .modalTitle{
       font-weight:1000;
@@ -361,6 +343,8 @@
       min-width:auto;
       padding: 8px 10px;
       border-radius: 12px;
+      background: rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.18);
     }
     .modalBody{
       padding: 14px 16px 16px 16px;
@@ -388,8 +372,8 @@
     }
     .select, .num{
       width:100%;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.22);
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
       color: var(--chalk);
       padding: 10px 10px;
       border-radius: 12px;
@@ -401,8 +385,8 @@
       display:flex;
       flex-direction:column;
       gap:8px;
-      border:1px solid var(--line);
-      background: rgba(0,0,0,.16);
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
       padding: 10px;
       border-radius: 16px;
     }
@@ -422,15 +406,56 @@
       gap: 10px;
       justify-content:flex-end;
       padding: 12px 16px 16px 16px;
-      border-top: 1px solid var(--line);
+      border-top: 1px solid rgba(255,255,255,.12);
     }
     .primary{
-      border-color: rgba(255,255,255,.55);
+      border-color: rgba(255,255,255,.40);
       background: rgba(255,255,255,.12);
     }
-    .danger{
-      border-color: var(--danger);
-      background: rgba(255,120,120,.12);
+
+    .hintBox{
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.22);
+      padding: 10px;
+      border-radius: 16px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      font-weight:900;
+      font-size:13px;
+      line-height:1.25;
+      font-variant-numeric: tabular-nums;
+    }
+    .hintRow{ opacity:.92; }
+    .hintSmall{ opacity:.75; font-size:12px; }
+
+    /* Multiplier buttons */
+    .seg{
+      display:flex;
+      gap:8px;
+      flex-wrap:nowrap;
+      width:100%;
+    }
+    .segBtn{
+      flex:1 1 0;
+      min-width: 0;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      font-size: 13px;
+      font-weight: 1000;
+      text-align:center;
+    }
+    .segBtn.active{
+      border-color: rgba(255,255,255,.45);
+      background: rgba(255,255,255,.14);
+      box-shadow: 0 8px 18px rgba(0,0,0,.35);
+    }
+
+    /* Team selection in add modal */
+    .teamSeg .segBtn{
+      padding: 10px 8px;
     }
 
     @media (max-width: 420px){
@@ -459,46 +484,36 @@
       <div class="sumChip top">
         <span class="sumLabel">Oben</span>
         <span class="sumNum" id="sumTop">0</span>
-        <button class="plusBtn hidden" id="btnPlusA" title="Runde hinzufügen (Oben)">+ Runde</button>
       </div>
       <div class="sumChip bottom">
         <span class="sumLabel">Unten</span>
         <span class="sumNum" id="sumBottom">0</span>
-        <button class="plusBtn hidden" id="btnPlusB" title="Runde hinzufügen (Unten)">+ Runde</button>
       </div>
 
-      <!-- OBEN (Gegenspieler, auf dem Kopf) -->
-      <div class="teamPanel top" data-team="A" aria-label="Oben">
-        <div class="zone z100" data-team="A" data-val="100">
-          <div class="write" id="a100W">
-            <span class="hint" id="hintA"></span>
-          </div>
-        </div>
+      <div class="centerAddWrap">
+        <button class="centerAdd hidden" id="btnAddCenter">+ Runde</button>
+      </div>
 
+      <!-- OBEN -->
+      <div class="teamPanel top" data-team="A" aria-label="Oben">
+        <div class="zone z100" data-team="A" data-val="100"><div class="write" id="a100W"></div></div>
         <div class="restCol rest">
           <div class="restValue" id="restA"></div>
           <input id="restInputA" type="text" inputmode="text" placeholder="Neuer Restbetrag" autocomplete="off" />
         </div>
-
         <div class="zone z50" data-team="A" data-val="50"><div class="write" id="a50W"></div></div>
         <div class="zone z20" data-team="A" data-val="20"><div class="write" id="a20W"></div></div>
       </div>
 
       <div class="divider"></div>
 
-      <!-- UNTEN (du) -->
+      <!-- UNTEN -->
       <div class="teamPanel" data-team="B" aria-label="Unten">
-        <div class="zone z100" data-team="B" data-val="100">
-          <div class="write" id="b100W">
-            <span class="hint" id="hintB"></span>
-          </div>
-        </div>
-
+        <div class="zone z100" data-team="B" data-val="100"><div class="write" id="b100W"></div></div>
         <div class="restCol rest">
           <div class="restValue" id="restB"></div>
           <input id="restInputB" type="text" inputmode="text" placeholder="Neuer Restbetrag" autocomplete="off" />
         </div>
-
         <div class="zone z50" data-team="B" data-val="50"><div class="write" id="b50W"></div></div>
         <div class="zone z20" data-team="B" data-val="20"><div class="write" id="b20W"></div></div>
       </div>
@@ -520,8 +535,9 @@
             <option value="classic">Klassische Tafel</option>
           </select>
         </div>
-        <div class="hint">
-          In der „Verbesserten Zählweise“ addierst du ganze Runden über „+ Runde“. In der „Klassischen Tafel“ zählst du wie bisher mit Strichen + Restbetrag.
+        <div class="hintBox">
+          <div class="hintRow">Verbesserte Zählweise: „+ Runde“ → Punkte werden automatisch als Striche eingetragen (100/50/20/Rest).</div>
+          <div class="hintRow">Klassische Tafel: Striche antippen + Restbetrag manuell.</div>
         </div>
       </div>
       <div class="modalFooter">
@@ -534,30 +550,39 @@
   <div class="modalBackdrop" id="roundModal" aria-hidden="true">
     <div class="modal" role="dialog" aria-modal="true" aria-label="Runde hinzufügen">
       <div class="modalHeader">
-        <div class="modalTitle" id="roundTitle">Runde hinzufügen</div>
+        <div class="modalTitle" id="roundTitle">+ Runde</div>
         <button class="modalClose" id="btnCloseRound">Schliessen</button>
       </div>
 
       <div class="modalBody">
+        <div class="field">
+          <div class="label">Für welches Team?</div>
+          <div class="seg teamSeg" id="teamSeg">
+            <button class="segBtn active" data-team="B" type="button">Unten</button>
+            <button class="segBtn" data-team="A" type="button">Oben</button>
+          </div>
+        </div>
+
         <div class="row">
           <div class="field">
             <div class="label">Gemachte Punkte</div>
             <input class="num" id="inpPoints" inputmode="numeric" autocomplete="off" placeholder="z.B. 84" />
           </div>
-          <div class="field">
-            <div class="label">Zählt wie oft?</div>
-            <select class="select" id="selMult">
-              <option value="1">einfach (x1)</option>
-              <option value="2">doppelt (x2)</option>
-              <option value="3">dreifach (x3)</option>
-              <option value="4">vierfach (x4)</option>
-            </select>
+        </div>
+
+        <div class="field">
+          <div class="label">Multiplikator</div>
+          <div class="seg" id="multSeg">
+            <button class="segBtn active" data-m="1" type="button">1×</button>
+            <button class="segBtn" data-m="2" type="button">2×</button>
+            <button class="segBtn" data-m="3" type="button">3×</button>
+            <button class="segBtn" data-m="4" type="button">4×</button>
           </div>
         </div>
 
         <div class="checks">
           <label class="check">
-            <input type="checkbox" id="chkAutoOpp" />
+            <input type="checkbox" id="chkAutoOpp" checked />
             Gegner automatisch ergänzen (Total 157)
           </label>
           <label class="check">
@@ -566,7 +591,7 @@
           </label>
         </div>
 
-        <div class="hint" id="roundHint"></div>
+        <div class="hintBox" id="roundHint"></div>
       </div>
 
       <div class="modalFooter">
@@ -577,18 +602,26 @@
 
   <script>
     (function(){
-      const LS_KEY_MODE = "jass_mode_v2";
+      const LS_KEY_MODE = "jass_mode_v3";
 
       const state = {
-        mode: "improved", // default: improved
+        mode: "improved", // default
         subtract: false,
-        // classic counters
+
+        // classic counters (used for display in BOTH modes)
         A: { c100: 0, c50: 0, c20: 0, rest: 0 },
         B: { c100: 0, c50: 0, c20: 0, rest: 0 },
-        // improved: sums + history
+
+        // improved sums (round additions accumulate here)
         improved: {
-          A: { sum: 0, rounds: [] },
-          B: { sum: 0, rounds: [] }
+          A: { sum: 0 },
+          B: { sum: 0 }
+        },
+
+        // round modal selections
+        ui: {
+          addTeam: "B",
+          mult: 1
         }
       };
 
@@ -599,11 +632,10 @@
         btnReset: document.getElementById('btnReset'),
         btnSettings: document.getElementById('btnSettings'),
 
+        btnAddCenter: document.getElementById('btnAddCenter'),
+
         sumTop: document.getElementById('sumTop'),
         sumBottom: document.getElementById('sumBottom'),
-
-        btnPlusA: document.getElementById('btnPlusA'),
-        btnPlusB: document.getElementById('btnPlusB'),
 
         restA: document.getElementById('restA'),
         restB: document.getElementById('restB'),
@@ -617,9 +649,6 @@
         b50W: document.getElementById('b50W'),
         b20W: document.getElementById('b20W'),
 
-        hintA: document.getElementById('hintA'),
-        hintB: document.getElementById('hintB'),
-
         // settings modal
         settingsModal: document.getElementById('settingsModal'),
         btnCloseSettings: document.getElementById('btnCloseSettings'),
@@ -632,10 +661,12 @@
         btnAddRound: document.getElementById('btnAddRound'),
         roundTitle: document.getElementById('roundTitle'),
         inpPoints: document.getElementById('inpPoints'),
-        selMult: document.getElementById('selMult'),
         chkAutoOpp: document.getElementById('chkAutoOpp'),
         chkMatch: document.getElementById('chkMatch'),
         roundHint: document.getElementById('roundHint'),
+
+        teamSeg: document.getElementById('teamSeg'),
+        multSeg: document.getElementById('multSeg'),
       };
 
       // ---------- helpers ----------
@@ -669,7 +700,25 @@
         localStorage.setItem(LS_KEY_MODE, state.mode);
       }
 
-      // ---------- classic render (your original) ----------
+      function sanitizeInt(text){
+        const s = (text ?? "").toString().trim().replace(",", ".");
+        if(!s) return null;
+        const n = Number(s);
+        if(!Number.isFinite(n)) return null;
+        return Math.round(n);
+      }
+
+      // Decompose sum into 100/50/20/rest with "largest possible strokes"
+      function decomposePoints(sum){
+        let s = Math.max(0, Math.round(sum || 0));
+        const c100 = Math.floor(s / 100); s -= c100 * 100;
+        const c50  = Math.floor(s / 50);  s -= c50  * 50;
+        const c20  = Math.floor(s / 20);  s -= c20  * 20;
+        const rest = s;
+        return { c100, c50, c20, rest };
+      }
+
+      // ---------- tally drawing ----------
       function makeTallyGroup(countInGroup){
         const g = document.createElement('div');
         g.className = 'group';
@@ -719,26 +768,7 @@
         if(odd === 1) hostEl.appendChild(makeMark50('slash'));
       }
 
-      function renderClassic(){
-        // clear hints
-        el.hintA.textContent = "";
-        el.hintB.textContent = "";
-
-        renderTalliesTo(el.a100W, state.A.c100);
-        render50To(el.a50W, state.A.c50);
-        renderTalliesTo(el.a20W, state.A.c20);
-
-        renderTalliesTo(el.b100W, state.B.c100);
-        render50To(el.b50W, state.B.c50);
-        renderTalliesTo(el.b20W, state.B.c20);
-
-        setMaybeEmptyText(el.restA, state.A.rest);
-        setMaybeEmptyText(el.restB, state.B.rest);
-
-        el.sumTop.textContent = String(teamSumClassic(state.A));
-        el.sumBottom.textContent = String(teamSumClassic(state.B));
-      }
-
+      // ---------- classic behavior ----------
       function bumpCount(teamKey, val){
         const t = state[teamKey];
         const delta = state.subtract ? -1 : 1;
@@ -766,134 +796,88 @@
         render();
       }
 
-      // ---------- improved mode ----------
+      // ---------- improved behavior ----------
       function teamSumImproved(teamKey){
-        return state.improved[teamKey].sum || 0;
+        return Math.max(0, Math.round(state.improved[teamKey].sum || 0));
       }
 
-      function renderRoundHistory(teamKey, hostEl){
-        hostEl.innerHTML = "";
+      function syncClassicFromImproved(){
+        // Write sums into classic counters (for automatic strokes)
+        const a = decomposePoints(teamSumImproved("A"));
+        const b = decomposePoints(teamSumImproved("B"));
 
-        const rounds = state.improved[teamKey].rounds;
-        if(!rounds.length){
-          const hint = document.createElement('span');
-          hint.className = 'hint';
-          hint.textContent = "Verbesserte Zählweise: „+ Runde“";
-          hostEl.appendChild(hint);
-          return;
-        }
-
-        // show last ~18 entries to avoid huge DOM
-        const slice = rounds.slice(-18);
-        for(const r of slice){
-          const c = document.createElement('span');
-          c.className = 'chip' + (r.match ? ' ok' : '');
-          c.textContent = r.label;
-          hostEl.appendChild(c);
-        }
-
-        if(rounds.length > slice.length){
-          const more = document.createElement('span');
-          more.className = 'chip mute';
-          more.textContent = `+${rounds.length - slice.length}…`;
-          hostEl.appendChild(more);
-        }
-      }
-
-      function renderImproved(){
-        // Hide classic tally visuals (but we keep zones). We’ll just display history in the 100-zones.
-        el.a50W.innerHTML = "";
-        el.a20W.innerHTML = "";
-        el.b50W.innerHTML = "";
-        el.b20W.innerHTML = "";
-
-        // Rest is unused in improved => show empty
-        setMaybeEmptyText(el.restA, 0);
-        setMaybeEmptyText(el.restB, 0);
-
-        renderRoundHistory("A", el.a100W);
-        renderRoundHistory("B", el.b100W);
-
-        el.sumTop.textContent = String(teamSumImproved("A"));
-        el.sumBottom.textContent = String(teamSumImproved("B"));
-      }
-
-      function sanitizeInt(text){
-        const s = (text ?? "").toString().trim().replace(",", ".");
-        if(!s) return null;
-        const n = Number(s);
-        if(!Number.isFinite(n)) return null;
-        return Math.round(n);
-      }
-
-      let currentAddTeam = "B";
-
-      function openAddRound(teamKey){
-        currentAddTeam = teamKey;
-
-        const who = (teamKey === "A") ? "Oben" : "Unten";
-        el.roundTitle.textContent = `Runde hinzufügen: ${who}`;
-
-        // reset fields
-        el.inpPoints.value = "";
-        el.selMult.value = "1";
-        el.chkAutoOpp.checked = true;
-        el.chkMatch.checked = false;
-        updateRoundHint();
-
-        openModal(el.roundModal);
-        // focus after open (small delay helps mobile)
-        setTimeout(() => el.inpPoints.focus(), 50);
+        state.A.c100 = a.c100; state.A.c50 = a.c50; state.A.c20 = a.c20; state.A.rest = a.rest;
+        state.B.c100 = b.c100; state.B.c50 = b.c50; state.B.c20 = b.c20; state.B.rest = b.rest;
       }
 
       function updateRoundHint(){
-        const mult = Number(el.selMult.value || 1);
+        const mult = state.ui.mult;
         const isMatch = el.chkMatch.checked;
-        const autoOpp = el.chkAutoOpp.checked;
+        const autoOpp = el.chkAutoOpp.checked; // always 157 if checked
+        const teamKey = state.ui.addTeam;
+        const oppKey = (teamKey === "A") ? "B" : "A";
 
         if(isMatch){
-          el.roundHint.textContent = "Match setzt fix 257 / 0. (Multiplikator wird ignoriert.)";
+          // Match base = 257 for own, 0 for opponent. Mult applies.
+          const ownBase = 257;
+          const ownAdd = ownBase * mult;
+
           el.inpPoints.disabled = true;
           el.chkAutoOpp.disabled = true;
+
+          el.roundHint.innerHTML = `
+            <div class="hintRow">Eigen: ${ownBase} × ${mult} = ${ownAdd}</div>
+            <div class="hintRow">Gegner: 0</div>
+            <div class="hintSmall">Team: ${teamKey === "A" ? "Oben" : "Unten"} · Match</div>
+          `;
           return;
         }
+
         el.inpPoints.disabled = false;
         el.chkAutoOpp.disabled = false;
 
         const pts = sanitizeInt(el.inpPoints.value);
         if(pts === null){
-          el.roundHint.textContent = autoOpp
-            ? `Auto-Gegner: Total 157 (×${mult})`
-            : `Nur eigene Punkte (×${mult})`;
+          el.roundHint.innerHTML = `
+            <div class="hintRow">Eigen: —</div>
+            <div class="hintRow">Gegner: ${autoOpp ? "157 − Eigen (automatisch)" : "—"}</div>
+            <div class="hintSmall">Multiplikator: ×${mult} · Team: ${teamKey === "A" ? "Oben" : "Unten"}</div>
+          `;
           return;
         }
 
-        const own = pts;
-        const opp = Math.max(0, 157 - own);
+        const ownBase = pts;
+        const ownAdd = ownBase * mult;
 
-        el.roundHint.textContent = autoOpp
-          ? `Eigen: ${own} ×${mult} | Gegner: ${opp} ×${mult} (Total 157)`
-          : `Eigen: ${own} ×${mult}`;
+        if(autoOpp){
+          const oppBase = Math.max(0, 157 - ownBase);
+          const oppAdd = oppBase * mult;
+          el.roundHint.innerHTML = `
+            <div class="hintRow">Eigen: ${ownBase} × ${mult} = ${ownAdd}</div>
+            <div class="hintRow">Gegner: ${oppBase} × ${mult} = ${oppAdd}</div>
+            <div class="hintSmall">Auto-Gegner ergänzt immer auf 157.</div>
+          `;
+        } else {
+          el.roundHint.innerHTML = `
+            <div class="hintRow">Eigen: ${ownBase} × ${mult} = ${ownAdd}</div>
+            <div class="hintRow">Gegner: —</div>
+            <div class="hintSmall">Ohne Auto-Gegner wird nur Eigen addiert.</div>
+          `;
+        }
       }
 
       function addRound(){
-        const mult = Number(el.selMult.value || 1);
+        const mult = state.ui.mult;
         const isMatch = el.chkMatch.checked;
         const autoOpp = el.chkAutoOpp.checked;
 
-        const teamKey = currentAddTeam;
+        const teamKey = state.ui.addTeam;
         const oppKey = (teamKey === "A") ? "B" : "A";
 
         if(isMatch){
-          const addOwn = 257;
-          const addOpp = 0;
-
-          state.improved[teamKey].sum += addOwn;
-          state.improved[oppKey].sum += addOpp;
-
-          state.improved[teamKey].rounds.push({ label: `+257 (Match)`, match:true });
-          state.improved[oppKey].rounds.push({ label: `+0 (Match)`, match:true });
-
+          const ownAdd = 257 * mult;
+          state.improved[teamKey].sum += ownAdd;
+          // opponent stays 0 even with multiplier (still 0)
           closeModal(el.roundModal);
           render();
           return;
@@ -909,37 +893,25 @@
           return;
         }
 
-        const ownBase = pts;
-        const ownAdd = ownBase * mult;
-
-        let oppAdd = 0;
-        let oppBase = 0;
-
-        if(autoOpp){
-          const total = 157;
-          oppBase = Math.max(0, total - ownBase);
-          oppAdd = oppBase * mult;
-        }
-
+        const ownAdd = pts * mult;
         state.improved[teamKey].sum += ownAdd;
-        state.improved[teamKey].rounds.push({
-          label: `+${ownBase}${mult>1 ? `×${mult}` : ""}${autoOpp ? "" : ""}`,
-          match:false
-        });
 
         if(autoOpp){
+          const oppBase = Math.max(0, 157 - pts);
+          const oppAdd = oppBase * mult;
           state.improved[oppKey].sum += oppAdd;
-          state.improved[oppKey].rounds.push({
-            label: `+${oppBase}${mult>1 ? `×${mult}` : ""} (Auto)`,
-            match:false
-          });
         }
+
+        // reset modal inputs
+        el.inpPoints.value = "";
+        el.chkMatch.checked = false;
+        el.chkAutoOpp.checked = true;
 
         closeModal(el.roundModal);
         render();
       }
 
-      // ---------- render master ----------
+      // ---------- render ----------
       function applyModeUI(){
         const isImproved = (state.mode === "improved");
 
@@ -949,32 +921,46 @@
         el.btnMode.style.display = isImproved ? "none" : "";
         el.btnMode.disabled = isImproved;
 
-        // improved-only: plus buttons (inside sum chips)
-        el.btnPlusA.classList.toggle("hidden", !isImproved);
-        el.btnPlusB.classList.toggle("hidden", !isImproved);
+        // improved-only: center add
+        el.btnAddCenter.classList.toggle("hidden", !isImproved);
 
-        // set settings select
+        // set select
         el.modeSelect.value = state.mode;
 
-        // reset correction state when entering improved
+        // entering improved => correction off
         if(isImproved) state.subtract = false;
+      }
+
+      function renderBoardFromClassicState(){
+        renderTalliesTo(el.a100W, state.A.c100);
+        render50To(el.a50W, state.A.c50);
+        renderTalliesTo(el.a20W, state.A.c20);
+
+        renderTalliesTo(el.b100W, state.B.c100);
+        render50To(el.b50W, state.B.c50);
+        renderTalliesTo(el.b20W, state.B.c20);
+
+        setMaybeEmptyText(el.restA, state.A.rest);
+        setMaybeEmptyText(el.restB, state.B.rest);
+
+        el.sumTop.textContent = String(teamSumClassic(state.A));
+        el.sumBottom.textContent = String(teamSumClassic(state.B));
       }
 
       function render(){
         applyModeUI();
 
-        if(state.mode === "classic"){
-          renderClassic();
-
-          el.btnMode.classList.toggle('on', state.subtract);
-          el.btnMode.classList.toggle('subtract', state.subtract);
-          el.btnMode.setAttribute('aria-pressed', String(state.subtract));
-          el.btnMode.textContent = state.subtract ? 'Korrektur: AN' : 'Korrektur';
-          return;
+        if(state.mode === "improved"){
+          syncClassicFromImproved();
         }
 
-        // improved
-        renderImproved();
+        renderBoardFromClassicState();
+
+        // classic UI state
+        el.btnMode.classList.toggle('on', state.subtract);
+        el.btnMode.classList.toggle('subtract', state.subtract);
+        el.btnMode.setAttribute('aria-pressed', String(state.subtract));
+        el.btnMode.textContent = state.subtract ? 'Korrektur: AN' : 'Korrektur';
       }
 
       // ---------- events ----------
@@ -1003,12 +989,15 @@
         if(!ok) return;
 
         state.subtract = false;
+
+        // classic
         state.A = { c100:0, c50:0, c20:0, rest:0 };
         state.B = { c100:0, c50:0, c20:0, rest:0 };
 
+        // improved sums
         state.improved = {
-          A: { sum: 0, rounds: [] },
-          B: { sum: 0, rounds: [] }
+          A: { sum: 0 },
+          B: { sum: 0 }
         };
 
         el.restInputA.value = "";
@@ -1017,7 +1006,7 @@
         render();
       });
 
-      // settings modal open/close
+      // settings modal
       el.btnSettings.addEventListener('click', () => openModal(el.settingsModal));
       el.btnCloseSettings.addEventListener('click', () => closeModal(el.settingsModal));
       el.settingsModal.addEventListener('click', (e) => {
@@ -1032,9 +1021,29 @@
         render();
       });
 
-      // plus buttons
-      el.btnPlusA.addEventListener('click', () => openAddRound("A"));
-      el.btnPlusB.addEventListener('click', () => openAddRound("B"));
+      // center add
+      el.btnAddCenter.addEventListener('click', () => {
+        // init modal defaults
+        el.inpPoints.value = "";
+        el.chkAutoOpp.checked = true;
+        el.chkMatch.checked = false;
+
+        // default team = unten
+        state.ui.addTeam = "B";
+        [...el.teamSeg.querySelectorAll('.segBtn')].forEach(b => {
+          b.classList.toggle('active', b.dataset.team === state.ui.addTeam);
+        });
+
+        // default mult = 1
+        state.ui.mult = 1;
+        [...el.multSeg.querySelectorAll('.segBtn')].forEach(b => {
+          b.classList.toggle('active', Number(b.dataset.m) === state.ui.mult);
+        });
+
+        updateRoundHint();
+        openModal(el.roundModal);
+        setTimeout(() => el.inpPoints.focus(), 60);
+      });
 
       // round modal close/backdrop
       el.btnCloseRound.addEventListener('click', () => closeModal(el.roundModal));
@@ -1042,12 +1051,38 @@
         if(e.target === el.roundModal) closeModal(el.roundModal);
       });
 
+      // team segmented
+      el.teamSeg.addEventListener('click', (e) => {
+        const btn = e.target.closest('.segBtn');
+        if(!btn) return;
+        state.ui.addTeam = btn.dataset.team;
+        [...el.teamSeg.querySelectorAll('.segBtn')].forEach(b => b.classList.toggle('active', b === btn));
+        updateRoundHint();
+      });
+
+      // multiplier segmented
+      el.multSeg.addEventListener('click', (e) => {
+        const btn = e.target.closest('.segBtn');
+        if(!btn) return;
+        state.ui.mult = Number(btn.dataset.m) || 1;
+        [...el.multSeg.querySelectorAll('.segBtn')].forEach(b => b.classList.toggle('active', b === btn));
+        updateRoundHint();
+      });
+
       // round modal inputs
       el.inpPoints.addEventListener('input', updateRoundHint);
-      el.selMult.addEventListener('change', updateRoundHint);
       el.chkAutoOpp.addEventListener('change', updateRoundHint);
       el.chkMatch.addEventListener('change', updateRoundHint);
+
       el.btnAddRound.addEventListener('click', addRound);
+
+      // Enter adds round
+      el.inpPoints.addEventListener('keydown', (e) => {
+        if(e.key === "Enter"){
+          e.preventDefault();
+          addRound();
+        }
+      });
 
       // ESC closes modals
       document.addEventListener('keydown', (e) => {
@@ -1058,7 +1093,7 @@
       });
 
       // init
-      loadMode(); // default stays improved if nothing stored
+      loadMode();
       if(state.mode !== "classic" && state.mode !== "improved") state.mode = "improved";
       render();
     })();

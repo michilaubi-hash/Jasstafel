@@ -12,6 +12,8 @@
       --line:rgba(243,246,241,.26);
       --line-strong:rgba(243,246,241,.42);
       --glass:rgba(0,0,0,.18);
+      --danger: rgba(255,120,120,.75);
+      --ok: rgba(140,255,170,.65);
     }
 
     *{ box-sizing:border-box; -webkit-tap-highlight-color: transparent; }
@@ -59,17 +61,18 @@
       cursor:pointer;
       user-select:none;
       touch-action: manipulation;
-      transition: transform .06s ease, background .12s ease, border-color .12s ease;
+      transition: transform .06s ease, background .12s ease, border-color .12s ease, opacity .12s ease;
       min-width: 112px;
     }
     button:active{ transform: scale(.98); }
+    button[disabled]{ opacity:.45; cursor:not-allowed; }
 
     .toggle.on{
       border-color: rgba(255,255,255,.55);
       background: rgba(255,255,255,.10);
     }
     .toggle.on.subtract{
-      border-color: rgba(255,120,120,.75);
+      border-color: var(--danger);
       background: rgba(255,120,120,.12);
     }
 
@@ -108,6 +111,9 @@
       letter-spacing:.2px;
       white-space:nowrap;
       pointer-events:none;
+      display:flex;
+      align-items:center;
+      gap:10px;
     }
     .sumChip.top{
       top: calc(50% - 30px);
@@ -116,6 +122,32 @@
     .sumChip.bottom{
       top: calc(50% + 10px);
     }
+
+    .sumLabel{
+      opacity:.85;
+      font-weight:900;
+      font-size:13px;
+      letter-spacing:.15px;
+    }
+    .sumNum{
+      font-variant-numeric: tabular-nums;
+      font-weight:1000;
+      font-size:16px;
+    }
+
+    /* + Buttons für verbesserte Zählweise */
+    .plusBtn{
+      pointer-events:auto;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.10);
+      padding:7px 10px;
+      border-radius:999px;
+      font-weight:1000;
+      font-size:14px;
+      min-width:auto;
+    }
+    .plusBtn:active{ transform: scale(.98); }
+    .plusBtn.hidden{ display:none; }
 
     /* WICHTIG: Rest sitzt NUR in Zeile 1 rechts.
        50/20 spannen über beide Spalten => bis ganz nach rechts. */
@@ -152,7 +184,7 @@
     .write{
       width:100%;
       display:flex;
-      align-items:flex-end;
+      align-items:center;
       gap:6px;
       padding: 4px 2px 2px 2px;
       overflow-x:auto;
@@ -162,6 +194,30 @@
       scrollbar-width:none;
     }
     .write::-webkit-scrollbar{ display:none; }
+
+    /* History-Chips (verbesserte Zählweise) */
+    .chip{
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.20);
+      padding: 6px 9px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 12px;
+      white-space: nowrap;
+      opacity: .95;
+    }
+    .chip.ok{ border-color: var(--ok); }
+    .chip.mute{ opacity:.65; }
+
+    .hint{
+      opacity:.70;
+      font-weight:900;
+      font-size:12px;
+      letter-spacing:.1px;
+      padding: 2px 4px;
+      white-space:nowrap;
+    }
 
     /* 100/20: 5er-Striche */
     .group{
@@ -196,14 +252,14 @@
       transform-origin:left center;
     }
 
-    /* 50er: Kreuze DICHT (wenig Abstand zwischen Kreuzen) */
+    /* 50er: Kreuze DICHT */
     .mark50{
-      width:16px;   /* schmal */
+      width:16px;
       height:44px;
       position:relative;
       opacity:.95;
       flex: 0 0 auto;
-      margin-right:1px; /* noch dichter */
+      margin-right:1px;
     }
     .slash{
       position:absolute;
@@ -237,6 +293,7 @@
       font-size:15px;
       min-height: 18px;
       opacity:.95;
+      font-variant-numeric: tabular-nums;
     }
     input[type="text"]{
       width:100%;
@@ -254,8 +311,127 @@
     /* Positionierung im Grid */
     .z100{ grid-column:1; grid-row:1; }
     .rest{ grid-column:2; grid-row:1; }
-    .z50{ grid-column:1 / 3; grid-row:2; }  /* spannt voll bis rechts */
-    .z20{ grid-column:1 / 3; grid-row:3; }  /* spannt voll bis rechts */
+    .z50{ grid-column:1 / 3; grid-row:2; }
+    .z20{ grid-column:1 / 3; grid-row:3; }
+
+    /* Modus: verbesserte Zählweise => Klickfelder inaktiv, Rest-Inputs ausblenden, History anzeigen */
+    .mode-improved .zone{
+      pointer-events:none;
+    }
+    .mode-improved .restCol input{
+      display:none;
+    }
+
+    /* Modal */
+    .modalBackdrop{
+      position:fixed;
+      inset:0;
+      background: rgba(0,0,0,.55);
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 16px;
+      z-index: 50;
+    }
+    .modalBackdrop.open{ display:flex; }
+
+    .modal{
+      width: min(560px, 100%);
+      border:1px solid var(--line-strong);
+      background:
+        radial-gradient(900px 500px at 30% 20%, rgba(255,255,255,.05), transparent 60%),
+        linear-gradient(180deg, rgba(0,0,0,.22), rgba(0,0,0,.35));
+      border-radius: 22px;
+      box-shadow: 0 20px 60px rgba(0,0,0,.55);
+      overflow:hidden;
+    }
+    .modalHeader{
+      padding: 14px 16px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .modalTitle{
+      font-weight:1000;
+      letter-spacing:.2px;
+    }
+    .modalClose{
+      min-width:auto;
+      padding: 8px 10px;
+      border-radius: 12px;
+    }
+    .modalBody{
+      padding: 14px 16px 16px 16px;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:flex-end;
+    }
+    .field{
+      flex: 1 1 180px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+    }
+    .label{
+      font-weight: 900;
+      font-size: 12px;
+      opacity: .85;
+      letter-spacing: .1px;
+    }
+    .select, .num{
+      width:100%;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.22);
+      color: var(--chalk);
+      padding: 10px 10px;
+      border-radius: 12px;
+      font-weight: 900;
+      font-size: 14px;
+      outline:none;
+    }
+    .checks{
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.16);
+      padding: 10px;
+      border-radius: 16px;
+    }
+    .check{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight: 900;
+      font-size: 13px;
+      opacity: .95;
+      user-select:none;
+    }
+    .check input{ width:18px; height:18px; }
+
+    .modalFooter{
+      display:flex;
+      gap: 10px;
+      justify-content:flex-end;
+      padding: 12px 16px 16px 16px;
+      border-top: 1px solid var(--line);
+    }
+    .primary{
+      border-color: rgba(255,255,255,.55);
+      background: rgba(255,255,255,.12);
+    }
+    .danger{
+      border-color: var(--danger);
+      background: rgba(255,120,120,.12);
+    }
 
     @media (max-width: 420px){
       .teamPanel{ grid-template-columns: 1fr 78px; gap:7px; padding:9px; }
@@ -266,6 +442,7 @@
       .mark50{ width:15px; height:42px; }
       .slash{ height:36px; }
       .write{ gap:5px; }
+      button{ min-width: 104px; }
     }
   </style>
 </head>
@@ -275,19 +452,34 @@
     <div class="topbar">
       <button class="toggle" id="btnMode" aria-pressed="false">Korrektur</button>
       <button id="btnReset">Reset</button>
+      <button id="btnSettings">Einstellungen</button>
     </div>
 
-    <div class="board" role="application" aria-label="Jass Schiefertafel">
-      <div class="sumChip top" id="sumTop">0</div>
-      <div class="sumChip bottom" id="sumBottom">0</div>
+    <div class="board" id="board" role="application" aria-label="Jass Schiefertafel">
+      <div class="sumChip top">
+        <span class="sumLabel">Oben</span>
+        <span class="sumNum" id="sumTop">0</span>
+        <button class="plusBtn hidden" id="btnPlusA" title="Runde hinzufügen (Oben)">+ Runde</button>
+      </div>
+      <div class="sumChip bottom">
+        <span class="sumLabel">Unten</span>
+        <span class="sumNum" id="sumBottom">0</span>
+        <button class="plusBtn hidden" id="btnPlusB" title="Runde hinzufügen (Unten)">+ Runde</button>
+      </div>
 
       <!-- OBEN (Gegenspieler, auf dem Kopf) -->
       <div class="teamPanel top" data-team="A" aria-label="Oben">
-        <div class="zone z100" data-team="A" data-val="100"><div class="write" id="a100W"></div></div>
+        <div class="zone z100" data-team="A" data-val="100">
+          <div class="write" id="a100W">
+            <span class="hint" id="hintA"></span>
+          </div>
+        </div>
+
         <div class="restCol rest">
           <div class="restValue" id="restA"></div>
           <input id="restInputA" type="text" inputmode="text" placeholder="Neuer Restbetrag" autocomplete="off" />
         </div>
+
         <div class="zone z50" data-team="A" data-val="50"><div class="write" id="a50W"></div></div>
         <div class="zone z20" data-team="A" data-val="20"><div class="write" id="a20W"></div></div>
       </div>
@@ -296,30 +488,123 @@
 
       <!-- UNTEN (du) -->
       <div class="teamPanel" data-team="B" aria-label="Unten">
-        <div class="zone z100" data-team="B" data-val="100"><div class="write" id="b100W"></div></div>
+        <div class="zone z100" data-team="B" data-val="100">
+          <div class="write" id="b100W">
+            <span class="hint" id="hintB"></span>
+          </div>
+        </div>
+
         <div class="restCol rest">
           <div class="restValue" id="restB"></div>
           <input id="restInputB" type="text" inputmode="text" placeholder="Neuer Restbetrag" autocomplete="off" />
         </div>
+
         <div class="zone z50" data-team="B" data-val="50"><div class="write" id="b50W"></div></div>
         <div class="zone z20" data-team="B" data-val="20"><div class="write" id="b20W"></div></div>
       </div>
     </div>
   </div>
 
+  <!-- MODAL: Einstellungen -->
+  <div class="modalBackdrop" id="settingsModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Einstellungen">
+      <div class="modalHeader">
+        <div class="modalTitle">Einstellungen</div>
+        <button class="modalClose" id="btnCloseSettings">Schliessen</button>
+      </div>
+      <div class="modalBody">
+        <div class="field">
+          <div class="label">Zählmodus</div>
+          <select class="select" id="modeSelect">
+            <option value="improved">Verbesserte Zählweise (Standard)</option>
+            <option value="classic">Klassische Tafel</option>
+          </select>
+        </div>
+        <div class="hint">
+          In der „Verbesserten Zählweise“ addierst du ganze Runden über „+ Runde“. In der „Klassischen Tafel“ zählst du wie bisher mit Strichen + Restbetrag.
+        </div>
+      </div>
+      <div class="modalFooter">
+        <button id="btnSaveSettings" class="primary">Speichern</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Runde hinzufügen -->
+  <div class="modalBackdrop" id="roundModal" aria-hidden="true">
+    <div class="modal" role="dialog" aria-modal="true" aria-label="Runde hinzufügen">
+      <div class="modalHeader">
+        <div class="modalTitle" id="roundTitle">Runde hinzufügen</div>
+        <button class="modalClose" id="btnCloseRound">Schliessen</button>
+      </div>
+
+      <div class="modalBody">
+        <div class="row">
+          <div class="field">
+            <div class="label">Gemachte Punkte</div>
+            <input class="num" id="inpPoints" inputmode="numeric" autocomplete="off" placeholder="z.B. 84" />
+          </div>
+          <div class="field">
+            <div class="label">Zählt wie oft?</div>
+            <select class="select" id="selMult">
+              <option value="1">einfach (x1)</option>
+              <option value="2">doppelt (x2)</option>
+              <option value="3">dreifach (x3)</option>
+              <option value="4">vierfach (x4)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="checks">
+          <label class="check">
+            <input type="checkbox" id="chkAutoOpp" />
+            Gegner automatisch ergänzen (Total 157)
+          </label>
+          <label class="check">
+            <input type="checkbox" id="chkMatch" />
+            Match (257 / 0)
+          </label>
+        </div>
+
+        <div class="hint" id="roundHint"></div>
+      </div>
+
+      <div class="modalFooter">
+        <button id="btnAddRound" class="primary">Hinzufügen</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     (function(){
+      const LS_KEY_MODE = "jass_mode_v2";
+
       const state = {
+        mode: "improved", // default: improved
         subtract: false,
+        // classic counters
         A: { c100: 0, c50: 0, c20: 0, rest: 0 },
-        B: { c100: 0, c50: 0, c20: 0, rest: 0 }
+        B: { c100: 0, c50: 0, c20: 0, rest: 0 },
+        // improved: sums + history
+        improved: {
+          A: { sum: 0, rounds: [] },
+          B: { sum: 0, rounds: [] }
+        }
       };
 
       const el = {
+        board: document.getElementById('board'),
+
         btnMode: document.getElementById('btnMode'),
         btnReset: document.getElementById('btnReset'),
+        btnSettings: document.getElementById('btnSettings'),
+
         sumTop: document.getElementById('sumTop'),
         sumBottom: document.getElementById('sumBottom'),
+
+        btnPlusA: document.getElementById('btnPlusA'),
+        btnPlusB: document.getElementById('btnPlusB'),
+
         restA: document.getElementById('restA'),
         restB: document.getElementById('restB'),
         restInputA: document.getElementById('restInputA'),
@@ -331,12 +616,60 @@
         b100W: document.getElementById('b100W'),
         b50W: document.getElementById('b50W'),
         b20W: document.getElementById('b20W'),
+
+        hintA: document.getElementById('hintA'),
+        hintB: document.getElementById('hintB'),
+
+        // settings modal
+        settingsModal: document.getElementById('settingsModal'),
+        btnCloseSettings: document.getElementById('btnCloseSettings'),
+        btnSaveSettings: document.getElementById('btnSaveSettings'),
+        modeSelect: document.getElementById('modeSelect'),
+
+        // round modal
+        roundModal: document.getElementById('roundModal'),
+        btnCloseRound: document.getElementById('btnCloseRound'),
+        btnAddRound: document.getElementById('btnAddRound'),
+        roundTitle: document.getElementById('roundTitle'),
+        inpPoints: document.getElementById('inpPoints'),
+        selMult: document.getElementById('selMult'),
+        chkAutoOpp: document.getElementById('chkAutoOpp'),
+        chkMatch: document.getElementById('chkMatch'),
+        roundHint: document.getElementById('roundHint'),
       };
 
+      // ---------- helpers ----------
       function clampMinZero(n){ return Math.max(0, n); }
-      function teamSum(t){ return (t.c100*100) + (t.c50*50) + (t.c20*20) + (t.rest || 0); }
+      function teamSumClassic(t){ return (t.c100*100) + (t.c50*50) + (t.c20*20) + (t.rest || 0); }
 
-      // 5er-Striche (100/20)
+      function setMaybeEmptyText(elm, value){
+        if(!value){
+          elm.textContent = "";
+          elm.classList.add('mutedEmpty');
+        } else {
+          elm.textContent = String(value);
+          elm.classList.remove('mutedEmpty');
+        }
+      }
+
+      function openModal(backdropEl){
+        backdropEl.classList.add('open');
+        backdropEl.setAttribute('aria-hidden','false');
+      }
+      function closeModal(backdropEl){
+        backdropEl.classList.remove('open');
+        backdropEl.setAttribute('aria-hidden','true');
+      }
+
+      function loadMode(){
+        const v = localStorage.getItem(LS_KEY_MODE);
+        if(v === "classic" || v === "improved") state.mode = v;
+      }
+      function saveMode(){
+        localStorage.setItem(LS_KEY_MODE, state.mode);
+      }
+
+      // ---------- classic render (your original) ----------
       function makeTallyGroup(countInGroup){
         const g = document.createElement('div');
         g.className = 'group';
@@ -359,7 +692,6 @@
         if(rest > 0) hostEl.appendChild(makeTallyGroup(rest));
       }
 
-      // 50er: dichtes Kreuz / slash
       function makeMark50(type){
         const m = document.createElement('div');
         m.className = 'mark50';
@@ -387,17 +719,11 @@
         if(odd === 1) hostEl.appendChild(makeMark50('slash'));
       }
 
-      function setMaybeEmptyText(elm, value){
-        if(!value){
-          elm.textContent = "";
-          elm.classList.add('mutedEmpty');
-        } else {
-          elm.textContent = String(value);
-          elm.classList.remove('mutedEmpty');
-        }
-      }
+      function renderClassic(){
+        // clear hints
+        el.hintA.textContent = "";
+        el.hintB.textContent = "";
 
-      function render(){
         renderTalliesTo(el.a100W, state.A.c100);
         render50To(el.a50W, state.A.c50);
         renderTalliesTo(el.a20W, state.A.c20);
@@ -409,13 +735,8 @@
         setMaybeEmptyText(el.restA, state.A.rest);
         setMaybeEmptyText(el.restB, state.B.rest);
 
-        el.sumTop.textContent = String(teamSum(state.A));
-        el.sumBottom.textContent = String(teamSum(state.B));
-
-        el.btnMode.classList.toggle('on', state.subtract);
-        el.btnMode.classList.toggle('subtract', state.subtract);
-        el.btnMode.setAttribute('aria-pressed', String(state.subtract));
-        el.btnMode.textContent = state.subtract ? 'Korrektur: AN' : 'Korrektur';
+        el.sumTop.textContent = String(teamSumClassic(state.A));
+        el.sumBottom.textContent = String(teamSumClassic(state.B));
       }
 
       function bumpCount(teamKey, val){
@@ -428,17 +749,6 @@
 
         render();
       }
-
-      document.querySelectorAll('.zone').forEach(z => {
-        z.addEventListener('click', () => {
-          bumpCount(z.dataset.team, Number(z.dataset.val));
-        }, { passive:true });
-      });
-
-      el.btnMode.addEventListener('click', () => {
-        state.subtract = !state.subtract;
-        render();
-      });
 
       function parseRest(text){
         const s = (text ?? "").toString().trim().replace(",", ".");
@@ -456,6 +766,231 @@
         render();
       }
 
+      // ---------- improved mode ----------
+      function teamSumImproved(teamKey){
+        return state.improved[teamKey].sum || 0;
+      }
+
+      function renderRoundHistory(teamKey, hostEl){
+        hostEl.innerHTML = "";
+
+        const rounds = state.improved[teamKey].rounds;
+        if(!rounds.length){
+          const hint = document.createElement('span');
+          hint.className = 'hint';
+          hint.textContent = "Verbesserte Zählweise: „+ Runde“";
+          hostEl.appendChild(hint);
+          return;
+        }
+
+        // show last ~18 entries to avoid huge DOM
+        const slice = rounds.slice(-18);
+        for(const r of slice){
+          const c = document.createElement('span');
+          c.className = 'chip' + (r.match ? ' ok' : '');
+          c.textContent = r.label;
+          hostEl.appendChild(c);
+        }
+
+        if(rounds.length > slice.length){
+          const more = document.createElement('span');
+          more.className = 'chip mute';
+          more.textContent = `+${rounds.length - slice.length}…`;
+          hostEl.appendChild(more);
+        }
+      }
+
+      function renderImproved(){
+        // Hide classic tally visuals (but we keep zones). We’ll just display history in the 100-zones.
+        el.a50W.innerHTML = "";
+        el.a20W.innerHTML = "";
+        el.b50W.innerHTML = "";
+        el.b20W.innerHTML = "";
+
+        // Rest is unused in improved => show empty
+        setMaybeEmptyText(el.restA, 0);
+        setMaybeEmptyText(el.restB, 0);
+
+        renderRoundHistory("A", el.a100W);
+        renderRoundHistory("B", el.b100W);
+
+        el.sumTop.textContent = String(teamSumImproved("A"));
+        el.sumBottom.textContent = String(teamSumImproved("B"));
+      }
+
+      function sanitizeInt(text){
+        const s = (text ?? "").toString().trim().replace(",", ".");
+        if(!s) return null;
+        const n = Number(s);
+        if(!Number.isFinite(n)) return null;
+        return Math.round(n);
+      }
+
+      let currentAddTeam = "B";
+
+      function openAddRound(teamKey){
+        currentAddTeam = teamKey;
+
+        const who = (teamKey === "A") ? "Oben" : "Unten";
+        el.roundTitle.textContent = `Runde hinzufügen: ${who}`;
+
+        // reset fields
+        el.inpPoints.value = "";
+        el.selMult.value = "1";
+        el.chkAutoOpp.checked = true;
+        el.chkMatch.checked = false;
+        updateRoundHint();
+
+        openModal(el.roundModal);
+        // focus after open (small delay helps mobile)
+        setTimeout(() => el.inpPoints.focus(), 50);
+      }
+
+      function updateRoundHint(){
+        const mult = Number(el.selMult.value || 1);
+        const isMatch = el.chkMatch.checked;
+        const autoOpp = el.chkAutoOpp.checked;
+
+        if(isMatch){
+          el.roundHint.textContent = "Match setzt fix 257 / 0. (Multiplikator wird ignoriert.)";
+          el.inpPoints.disabled = true;
+          el.chkAutoOpp.disabled = true;
+          return;
+        }
+        el.inpPoints.disabled = false;
+        el.chkAutoOpp.disabled = false;
+
+        const pts = sanitizeInt(el.inpPoints.value);
+        if(pts === null){
+          el.roundHint.textContent = autoOpp
+            ? `Auto-Gegner: Total 157 (×${mult})`
+            : `Nur eigene Punkte (×${mult})`;
+          return;
+        }
+
+        const own = pts;
+        const opp = Math.max(0, 157 - own);
+
+        el.roundHint.textContent = autoOpp
+          ? `Eigen: ${own} ×${mult} | Gegner: ${opp} ×${mult} (Total 157)`
+          : `Eigen: ${own} ×${mult}`;
+      }
+
+      function addRound(){
+        const mult = Number(el.selMult.value || 1);
+        const isMatch = el.chkMatch.checked;
+        const autoOpp = el.chkAutoOpp.checked;
+
+        const teamKey = currentAddTeam;
+        const oppKey = (teamKey === "A") ? "B" : "A";
+
+        if(isMatch){
+          const addOwn = 257;
+          const addOpp = 0;
+
+          state.improved[teamKey].sum += addOwn;
+          state.improved[oppKey].sum += addOpp;
+
+          state.improved[teamKey].rounds.push({ label: `+257 (Match)`, match:true });
+          state.improved[oppKey].rounds.push({ label: `+0 (Match)`, match:true });
+
+          closeModal(el.roundModal);
+          render();
+          return;
+        }
+
+        const pts = sanitizeInt(el.inpPoints.value);
+        if(pts === null){
+          alert("Bitte Punkte eingeben (oder Match aktivieren).");
+          return;
+        }
+        if(pts < 0 || pts > 257){
+          alert("Punkte müssen zwischen 0 und 257 liegen.");
+          return;
+        }
+
+        const ownBase = pts;
+        const ownAdd = ownBase * mult;
+
+        let oppAdd = 0;
+        let oppBase = 0;
+
+        if(autoOpp){
+          const total = 157;
+          oppBase = Math.max(0, total - ownBase);
+          oppAdd = oppBase * mult;
+        }
+
+        state.improved[teamKey].sum += ownAdd;
+        state.improved[teamKey].rounds.push({
+          label: `+${ownBase}${mult>1 ? `×${mult}` : ""}${autoOpp ? "" : ""}`,
+          match:false
+        });
+
+        if(autoOpp){
+          state.improved[oppKey].sum += oppAdd;
+          state.improved[oppKey].rounds.push({
+            label: `+${oppBase}${mult>1 ? `×${mult}` : ""} (Auto)`,
+            match:false
+          });
+        }
+
+        closeModal(el.roundModal);
+        render();
+      }
+
+      // ---------- render master ----------
+      function applyModeUI(){
+        const isImproved = (state.mode === "improved");
+
+        el.board.classList.toggle("mode-improved", isImproved);
+
+        // classic-only: correction button
+        el.btnMode.style.display = isImproved ? "none" : "";
+        el.btnMode.disabled = isImproved;
+
+        // improved-only: plus buttons (inside sum chips)
+        el.btnPlusA.classList.toggle("hidden", !isImproved);
+        el.btnPlusB.classList.toggle("hidden", !isImproved);
+
+        // set settings select
+        el.modeSelect.value = state.mode;
+
+        // reset correction state when entering improved
+        if(isImproved) state.subtract = false;
+      }
+
+      function render(){
+        applyModeUI();
+
+        if(state.mode === "classic"){
+          renderClassic();
+
+          el.btnMode.classList.toggle('on', state.subtract);
+          el.btnMode.classList.toggle('subtract', state.subtract);
+          el.btnMode.setAttribute('aria-pressed', String(state.subtract));
+          el.btnMode.textContent = state.subtract ? 'Korrektur: AN' : 'Korrektur';
+          return;
+        }
+
+        // improved
+        renderImproved();
+      }
+
+      // ---------- events ----------
+      document.querySelectorAll('.zone').forEach(z => {
+        z.addEventListener('click', () => {
+          if(state.mode !== "classic") return;
+          bumpCount(z.dataset.team, Number(z.dataset.val));
+        }, { passive:true });
+      });
+
+      el.btnMode.addEventListener('click', () => {
+        if(state.mode !== "classic") return;
+        state.subtract = !state.subtract;
+        render();
+      });
+
       [ [el.restInputA,'A'], [el.restInputB,'B'] ].forEach(([inp, team]) => {
         inp.addEventListener('keydown', (e) => {
           if(e.key === 'Enter'){ e.preventDefault(); commitRest(team, inp); inp.blur(); }
@@ -470,11 +1005,61 @@
         state.subtract = false;
         state.A = { c100:0, c50:0, c20:0, rest:0 };
         state.B = { c100:0, c50:0, c20:0, rest:0 };
+
+        state.improved = {
+          A: { sum: 0, rounds: [] },
+          B: { sum: 0, rounds: [] }
+        };
+
         el.restInputA.value = "";
         el.restInputB.value = "";
+
         render();
       });
 
+      // settings modal open/close
+      el.btnSettings.addEventListener('click', () => openModal(el.settingsModal));
+      el.btnCloseSettings.addEventListener('click', () => closeModal(el.settingsModal));
+      el.settingsModal.addEventListener('click', (e) => {
+        if(e.target === el.settingsModal) closeModal(el.settingsModal);
+      });
+
+      el.btnSaveSettings.addEventListener('click', () => {
+        const v = el.modeSelect.value;
+        state.mode = (v === "classic") ? "classic" : "improved";
+        saveMode();
+        closeModal(el.settingsModal);
+        render();
+      });
+
+      // plus buttons
+      el.btnPlusA.addEventListener('click', () => openAddRound("A"));
+      el.btnPlusB.addEventListener('click', () => openAddRound("B"));
+
+      // round modal close/backdrop
+      el.btnCloseRound.addEventListener('click', () => closeModal(el.roundModal));
+      el.roundModal.addEventListener('click', (e) => {
+        if(e.target === el.roundModal) closeModal(el.roundModal);
+      });
+
+      // round modal inputs
+      el.inpPoints.addEventListener('input', updateRoundHint);
+      el.selMult.addEventListener('change', updateRoundHint);
+      el.chkAutoOpp.addEventListener('change', updateRoundHint);
+      el.chkMatch.addEventListener('change', updateRoundHint);
+      el.btnAddRound.addEventListener('click', addRound);
+
+      // ESC closes modals
+      document.addEventListener('keydown', (e) => {
+        if(e.key === "Escape"){
+          closeModal(el.settingsModal);
+          closeModal(el.roundModal);
+        }
+      });
+
+      // init
+      loadMode(); // default stays improved if nothing stored
+      if(state.mode !== "classic" && state.mode !== "improved") state.mode = "improved";
       render();
     })();
   </script>
